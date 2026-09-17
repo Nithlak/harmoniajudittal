@@ -16,8 +16,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=28">
-  <script src="js/preview-lock.js?v=1"></script>
+  <link rel="stylesheet" href="css/styles.css?v=33">
 </head>
 <body class="page-contact">
   <div class="grain" aria-hidden="true"></div>
@@ -27,7 +26,7 @@
       <a class="logo" href="index.html" aria-label="Jóga és Elsősegély Judittal – főoldal">
         <img src="images/logo.png" alt="Jóga • Elsősegély • Judittal">
       </a>
-            <nav class="site-nav" id="site-nav" aria-label="Főmenü">
+      <nav class="site-nav" id="site-nav" aria-label="Főmenü">
         <ul class="nav-list">
           <li><a class="nav-link" href="index.html">Főoldal</a></li>
           <li><a class="nav-link nav-link--joga" href="joga.html">Jóga</a></li>
@@ -41,63 +40,90 @@
   </header>
   <main id="tartalom">
     <section class="section section--cream page-top">
-      <div class="container split split--start">
-        <div class="reveal">
+      <div class="container contact-page">
+        <header class="contact-page__intro reveal">
           <p class="eyebrow">Kapcsolat</p>
           <h1>Foglalj időpontot, <em>vagy írj nyugodtan</em></h1>
-          <p class="lead">Óra, képzés vagy coaching folyamat? Küldj üzenetet, és hamarosan jelentkezem.</p>
-        </div>
-      </div>
-      <div class="container contact-layout">
-        <form id="contact-form" class="reveal" novalidate>
-          <div class="field">
-            <label for="name">Név</label>
-            <input id="name" name="name" type="text" autocomplete="name" required>
-          </div>
-          <div class="field">
-            <label for="email">E-mail</label>
-            <input id="email" name="email" type="email" autocomplete="email" required>
-          </div>
-          <div class="field">
-            <label for="topic">Téma</label>
-            <select id="topic" name="topic" required>
-              <option value="">Válassz szolgáltatást</option>
-              <option value="joga">Jóga</option>
-              <option value="elseosegely">Elsősegélynyújtás</option>
-              <option value="coaching">Coaching</option>
-              <option value="egyeb">Egyéb kérdés</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="message">Üzenet</label>
-            <textarea id="message" name="message" required></textarea>
-          </div>
-          <label class="consent">
-            <input id="consent" name="consent" type="checkbox" required>
-            <span>Elfogadom, hogy a megadott adatokat a kapcsolatfelvételhez használjuk. Az adatkezelési tájékoztató később kerül feltöltésre.</span>
-          </label>
-          <button class="btn btn--primary" type="submit">Üzenet küldése</button>
-          <p class="form-status" id="form-status" hidden></p>
-        </form>
-        <div class="contact-details reveal">
-          <div class="contact-box">
-            <span>Név</span>
-            <strong>Tóth Judit</strong>
-          </div>
-          <div class="contact-box">
-            <span>E-mail</span>
-            <a href="mailto:tothj@tmmt.hu">tothj@tmmt.hu</a>
-          </div>
-          <div class="contact-box">
-            <span>Telefon</span>
-            <a href="tel:+36702333259">+36 70 233 3259</a>
-          </div>
-          <div class="contact-box">
-            <span>Helyszín</span>
-            <p>Az órák és a konzultációk helyszíne hamarosan pontosításra kerül. Online egyeztetés is kérhető.</p>
-          </div>
-        </div>
+          <p class="lead">Óra, képzés vagy coaching? Írj egy rövid üzenetet, és hamarosan jelentkezem.</p>
+        </header>
 
+        <div class="contact-shell">
+          <form id="contact-form" class="contact-form" action="https://formsubmit.co/tothj@tmmt.hu" method="POST" novalidate>
+            <input type="hidden" name="_subject" value="Új üzenet a weboldalról">
+            <input type="hidden" name="_template" value="table">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_next" value="">
+            <input type="text" class="hp-field" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+            <div class="contact-form__grid">
+              <div class="field">
+                <label for="name">Név <abbr title="kötelező">*</abbr></label>
+                <input id="name" name="name" type="text" autocomplete="name" required maxlength="80" placeholder="Teljes név">
+              </div>
+              <div class="field">
+                <label for="email">E-mail <abbr title="kötelező">*</abbr></label>
+                <input id="email" name="email" type="email" autocomplete="email" required maxlength="120" placeholder="pelda@email.hu">
+              </div>
+              <div class="field">
+                <label for="topic">Téma <abbr title="kötelező">*</abbr></label>
+                <select id="topic" name="topic" required>
+                  <option value="">Válassz szolgáltatást</option>
+                  <option value="Jóga">Jóga</option>
+                  <option value="Elsősegélynyújtás">Elsősegélynyújtás</option>
+                  <option value="Coaching">Coaching</option>
+                  <option value="Egyéb kérdés">Egyéb kérdés</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="phone">Telefon <span class="field__optional">opcionális</span></label>
+                <input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="24" placeholder="+36 …">
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="message">Üzenet <abbr title="kötelező">*</abbr></label>
+              <textarea id="message" name="message" required minlength="10" maxlength="2000" placeholder="Mikor jó, mire szeretnél időpontot, és van-e bármi, amire figyeljek?"></textarea>
+            </div>
+
+            <div class="field field--check">
+              <label for="human-check">Ellenőrzés <abbr title="kötelező">*</abbr> <span data-human-check-label>Mennyi 2 + 5?</span></label>
+              <input id="human-check" name="human_check" type="text" inputmode="numeric" required autocomplete="off" maxlength="4" placeholder="A válasz">
+            </div>
+
+            <label class="consent">
+              <input id="consent" name="consent" type="checkbox" value="Elfogadva" required>
+              <span>Elfogadom, hogy a megadott adatokat csak a válaszadáshoz használjuk.</span>
+            </label>
+
+            <div class="contact-form__actions">
+              <button class="btn btn--primary" type="submit">Üzenet küldése</button>
+              <p class="contact-form__hint">A csillaggal jelölt mezők kötelezők.</p>
+            </div>
+            <p class="form-status" id="form-status" hidden></p>
+          </form>
+
+          <aside class="contact-card" aria-label="Elérhetőség">
+            <p class="contact-card__kicker">Elérhetőség</p>
+            <a class="contact-card__row" href="mailto:tothj@tmmt.hu">
+              <span class="contact-card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none"><rect x="3.5" y="5.5" width="17" height="13" rx="2.2" stroke="currentColor" stroke-width="1.6"/><path d="M4.2 7.2 12 12.4l7.8-5.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span>
+                <small>E-mail</small>
+                <strong>tothj@tmmt.hu</strong>
+              </span>
+            </a>
+            <a class="contact-card__row" href="tel:+36702333259">
+              <span class="contact-card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M7.4 3.8h3.1l1.1 3.2-1.9 1.2a12.6 12.6 0 0 0 6.1 6.1l1.2-1.9 3.2 1.1v3.1c0 .7-.6 1.4-1.4 1.5-8.2.8-15.1-6.1-14.3-14.3.1-.8.8-1.4 1.5-1.4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+              </span>
+              <span>
+                <small>Telefon</small>
+                <strong>+36 70 233 3259</strong>
+              </span>
+            </a>
+          </aside>
+        </div>
       </div>
     </section>
   </main>
@@ -130,6 +156,6 @@
       <p class="footer-copy">&copy; <span id="year"></span> Jóga &amp; Elsősegély Judittal. Minden jog fenntartva.</p>
     </div>
   </footer>
-  <script src="js/main.js?v=5"></script>
+  <script src="js/main.js?v=15"></script>
 </body>
 </html>
