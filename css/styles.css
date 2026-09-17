@@ -1676,6 +1676,9 @@ body.page-joga .section--cream {
 body.page-joga h1 em,
 body.page-joga h2 em,
 body.page-joga .eyebrow { color: var(--joga); }
+body.page-joga .mask-organic img {
+  object-position: center 18%;
+}
 body.page-joga .btn--primary {
   background: linear-gradient(135deg, #9b6b9e 0%, #7d5480 60%, #c9a3cc 140%);
   box-shadow: 0 10px 24px rgba(125, 84, 128, 0.2);
@@ -1909,21 +1912,76 @@ body.page-contact .eyebrow { color: var(--teal-deep); }
 .aid-courses {
   display: grid;
   gap: 1.4rem;
+  align-items: stretch;
 }
 
 .aid-course {
-  padding: 1.7rem 1.5rem 1.8rem;
-  border-radius: 22px;
-  background: rgba(255,255,255,0.78);
-  border: 1px solid rgba(160, 90, 77, 0.1);
-  box-shadow: 0 16px 36px rgba(90, 52, 36, 0.05);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #fff;
+  border: 2px solid #c41e3a;
+  box-shadow: 0 14px 34px rgba(196, 30, 58, 0.08);
+}
+
+.aid-course__media {
+  position: relative;
+  display: block;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  line-height: 0;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid #c41e3a;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.aid-course__media::after {
+  display: none;
+}
+
+.aid-course__media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+#csecsemo-elseosegely .aid-course__media img {
+  object-position: center 42%;
+}
+
+#munkahelyi-elseosegely .aid-course__media img {
+  object-position: center 40%;
+}
+
+.aid-course__body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  padding: 1.2rem 1.35rem 1.4rem;
 }
 
 .aid-course h2 { margin: 0 0 0.55rem; }
 .aid-course h3 {
   margin: 1.15rem 0 0.45rem;
   font-size: 1.15rem;
-  color: var(--aid);
+  color: #c41e3a;
 }
 .aid-list {
   margin: 0 0 0.4rem;
@@ -1933,17 +1991,63 @@ body.page-contact .eyebrow { color: var(--teal-deep); }
 .aid-list li { margin: 0.35rem 0; }
 .aid-note {
   padding: 0.9rem 1rem;
-  border-radius: 14px;
-  background: rgba(255, 236, 228, 0.7);
+  border-radius: 12px;
+  background: rgba(196, 30, 58, 0.06);
+  border: 1px solid rgba(196, 30, 58, 0.12);
   color: var(--text);
 }
-.aid-course .btn { margin-top: 0.6rem; }
-
-@media (min-width: 900px) {
-  .aid-courses { grid-template-columns: 1fr 1fr; align-items: start; }
+.aid-course .btn {
+  margin-top: auto;
+  align-self: flex-start;
 }
 
-/* Homepage hero ù one glass panel, circular montage */
+body.page-aid .aid-course .btn--primary {
+  color: #fff;
+  background: #c41e3a;
+  border: 2px solid #c41e3a;
+  box-shadow: none;
+}
+
+body.page-aid .aid-course .btn--primary:hover {
+  color: #c41e3a;
+  background: #fff;
+  transform: translateY(-2px);
+}
+
+.mask-aid {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  line-height: 0;
+  border-radius: 22px;
+  background: transparent;
+  border: 2px solid #c41e3a;
+  box-shadow: 0 18px 42px rgba(196, 30, 58, 0.1);
+}
+
+.mask-aid img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+  background: transparent;
+}
+
+@media (min-width: 900px) {
+  .aid-courses { grid-template-columns: 1fr 1fr; align-items: stretch; }
+}
+
+/* Homepage hero ? one glass panel, circular montage */
 body.page-home {
   background:
     linear-gradient(125deg, #e0c3fc 0%, #fbc2eb 38%, #c2e9fb 72%, #d4f4ee 100%) top / 100% 110vh no-repeat,
@@ -2687,4 +2791,134 @@ a.is-preview-locked-link::after {
 
 @media (min-width: 700px) {
   .social-grid { grid-template-columns: 1fr 1fr; }
+}
+
+body.page-aid .section.page-top {
+  padding: calc(var(--header-h) + 1.15rem) 0 1.8rem;
+}
+
+body.page-aid .section--cream {
+  padding: 1.8rem 0 3.2rem;
+}
+
+body.page-aid .page-top .container.editorial {
+  width: min(calc(100% - 2.2rem), 1040px);
+}
+
+body.page-aid .editorial,
+body.page-aid .editorial--flip {
+  gap: 1.6rem;
+  align-items: center;
+}
+
+body.page-aid .page-top h1 {
+  margin: 0 0 0.7rem;
+  font-size: clamp(2rem, 4.2vw, 3rem);
+  line-height: 1.12;
+}
+
+body.page-aid .page-top .lead {
+  margin: 0;
+  max-width: 32rem;
+  font-size: 1.05rem;
+  line-height: 1.65;
+}
+
+body.page-aid .mask-aid {
+  height: auto;
+  aspect-ratio: 4 / 3;
+  border-radius: 18px;
+}
+
+body.page-aid .aid-courses {
+  width: min(100%, 1000px);
+  margin-inline: auto;
+  gap: 1.2rem;
+}
+
+body.page-aid .aid-course h2 {
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  line-height: 1.2;
+  margin: 0 0 0.4rem;
+}
+
+body.page-aid .aid-course .lead {
+  font-size: 1.02rem;
+  line-height: 1.5;
+  margin: 0 0 0.45rem;
+}
+
+body.page-aid .aid-course p {
+  margin: 0 0 0.55rem;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+body.page-aid .aid-course h3 {
+  margin: 0.55rem 0 0.25rem;
+  font-size: 0.98rem;
+}
+
+body.page-aid .aid-list {
+  margin: 0 0 0.35rem;
+}
+
+body.page-aid .aid-list li {
+  margin: 0.12rem 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+body.page-aid .aid-note {
+  margin: 0.35rem 0 0.85rem;
+  padding: 0.7rem 0.8rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+body.page-aid .aid-course .btn {
+  min-height: 44px;
+  padding: 0.65rem 1.2rem;
+}
+
+body.page-aid .cta-band {
+  min-height: 280px;
+}
+
+body.page-aid .cta-band::after {
+  background: linear-gradient(90deg, rgba(28, 16, 18, 0.78) 0%, rgba(28, 16, 18, 0.52) 52%, rgba(28, 16, 18, 0.28) 100%);
+}
+
+body.page-aid .cta-band__inner {
+  padding: 2.6rem 0;
+}
+
+body.page-aid .cta-band h2 {
+  font-size: clamp(1.7rem, 3.6vw, 2.5rem);
+  text-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+
+@media (min-width: 900px) {
+  body.page-aid .editorial,
+  body.page-aid .editorial--flip {
+    grid-template-columns: 0.48fr 0.52fr;
+    gap: 2.2rem;
+  }
+}
+
+@media (max-width: 899px) {
+  body.page-aid .section.page-top {
+    padding-bottom: 1.4rem;
+  }
+}
+
+body:not(.page-home) .site-header:not(.is-scrolled) {
+  background: transparent;
+  box-shadow: none;
+  border-bottom-color: transparent;
+}
+
+body:not(.page-home) .section.page-top {
+  margin-top: calc(var(--header-h) * -1);
+  padding-top: calc(var(--header-h) + 1.2rem);
 }
