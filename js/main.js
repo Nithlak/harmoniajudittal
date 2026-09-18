@@ -250,9 +250,14 @@
 
     if (frame) {
       frame.addEventListener("pointerdown", function (e) {
+        if (e.target.closest(".event__poster")) {
+          startX = null;
+          return;
+        }
         startX = e.clientX;
       });
       frame.addEventListener("pointerup", function (e) {
+        if (startX == null) return;
         var dx = e.clientX - startX;
         if (Math.abs(dx) < 50) return;
         if (dx < 0) show("prev", true);
@@ -267,5 +272,197 @@
     });
 
     show("next");
+  })();
+
+  (function initPosterZoom() {
+    if (!window.matchMedia("(max-width: 699px)").matches) return;
+    var images = Array.prototype.slice.call(document.querySelectorAll(".page-home .event__poster img"));
+    if (!images.length) return;
+
+    images.forEach(function (img) {
+      img.setAttribute("tabindex", "0");
+      img.setAttribute("role", "button");
+      img.setAttribute("aria-label", (img.getAttribute("alt") || "\u00d3rarend") + " \u2014 nagy\u00edt\u00e1s");
+    });
+
+    var overlay = document.createElement("div");
+    overlay.className = "poster-zoom";
+    overlay.setAttribute("hidden", "");
+    overlay.innerHTML =
+      '<button type="button" class="poster-zoom__close" aria-label="Bez\u00e1r\u00e1s">&times;</button>' +
+      '<button type="button" class="poster-zoom__nav poster-zoom__nav--prev" aria-label="El\u0151z\u0151 \u00f3rarend">&lsaquo;</button>' +
+      '<div class="poster-zoom__stage">' +
+        '<img class="poster-zoom__img" alt="">' +
+      "</div>" +
+      '<button type="button" class="poster-zoom__nav poster-zoom__nav--next" aria-label="K\u00f6vetkez\u0151 \u00f3rarend">&rsaquo;</button>' +
+      '<p class="poster-zoom__hint">Csippentsd vagy koppints k\u00e9tszer a nagy\u00edt\u00e1shoz</p>';
+    document.body.appendChild(overlay);
+
+    var stage = overlay.querySelector(".poster-zoom__stage");
+    var view = overlay.querySelector(".poster-zoom__img");
+    var closeBtn = overlay.querySelector(".poster-zoom__close");
+    var prevNav = overlay.querySelector(".poster-zoom__nav--prev");
+    var nextNav = overlay.querySelector(".poster-zoom__nav--next");
+    var group = [];
+    var index = 0;
+    var scale = 1;
+    var tx = 0;
+    var ty = 0;
+    var startScale = 1;
+    var startTx = 0;
+    var startTy = 0;
+    var pinchStart = 0;
+    var lastTap = 0;
+    var pointers = {};
+    var dragging = false;
+    var dragX = 0;
+    var dragY = 0;
+
+    function apply() {
+      view.style.transform = "translate(" + tx + "px, " + ty + "px) scale(" + scale + ")";
+    }
+
+    function resetZoom() {
+      scale = 1;
+      tx = 0;
+      ty = 0;
+      apply();
+    }
+
+    function pointerCount() {
+      return Object.keys(pointers).length;
+    }
+
+    function pinchDist() {
+      var ids = Object.keys(pointers);
+      if (ids.length < 2) return 0;
+      var a = pointers[ids[0]];
+      var b = pointers[ids[1]];
+      var dx = a.x - b.x;
+      var dy = a.y - b.y;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    function showIndex(i) {
+      if (!group.length) return;
+      index = (i + group.length) % group.length;
+      var srcImg = group[index];
+      view.src = srcImg.currentSrc || srcImg.src;
+      view.alt = srcImg.alt || "";
+      var many = group.length > 1;
+      prevNav.hidden = !many;
+      nextNav.hidden = !many;
+      resetZoom();
+    }
+
+    function open(img) {
+      var figure = img.closest(".event__poster");
+      group = figure ? Array.prototype.slice.call(figure.querySelectorAll("img")) : [img];
+      index = Math.max(0, group.indexOf(img));
+      showIndex(index);
+      overlay.hidden = false;
+      document.body.classList.add("poster-zoom-open");
+    }
+
+    function close() {
+      overlay.hidden = true;
+      document.body.classList.remove("poster-zoom-open");
+      pointers = {};
+      dragging = false;
+      resetZoom();
+    }
+
+    images.forEach(function (img) {
+      img.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        open(img);
+      });
+      img.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          open(img);
+        }
+      });
+    });
+
+    closeBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      close();
+    });
+    prevNav.addEventListener("click", function (e) {
+      e.stopPropagation();
+      showIndex(index - 1);
+    });
+    nextNav.addEventListener("click", function (e) {
+      e.stopPropagation();
+      showIndex(index + 1);
+    });
+    overlay.addEventListener("click", function (e) {
+      if (e.target === overlay) close();
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (overlay.hidden) return;
+      if (e.key === "Escape") close();
+      if (e.key === "ArrowLeft") showIndex(index - 1);
+      if (e.key === "ArrowRight") showIndex(index + 1);
+    });
+
+    stage.addEventListener("pointerdown", function (e) {
+      e.preventDefault();
+      stage.setPointerCapture(e.pointerId);
+      pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
+      if (pointerCount() === 1) {
+        dragging = true;
+        dragX = e.clientX;
+        dragY = e.clientY;
+        startTx = tx;
+        startTy = ty;
+        var now = Date.now();
+        if (now - lastTap < 280) {
+          if (scale > 1.05) resetZoom();
+          else {
+            scale = 2.4;
+            apply();
+          }
+          lastTap = 0;
+        } else {
+          lastTap = now;
+        }
+      } else if (pointerCount() === 2) {
+        dragging = false;
+        pinchStart = pinchDist();
+        startScale = scale;
+      }
+    });
+
+    stage.addEventListener("pointermove", function (e) {
+      if (!pointers[e.pointerId]) return;
+      pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
+      if (pointerCount() === 2 && pinchStart) {
+        var dist = pinchDist();
+        scale = Math.min(4, Math.max(1, startScale * (dist / pinchStart)));
+        if (scale <= 1.02) {
+          tx = 0;
+          ty = 0;
+        }
+        apply();
+      } else if (dragging && scale > 1.02) {
+        tx = startTx + (e.clientX - dragX);
+        ty = startTy + (e.clientY - dragY);
+        apply();
+      }
+    });
+
+    function endPointer(e) {
+      delete pointers[e.pointerId];
+      if (pointerCount() < 2) pinchStart = 0;
+      if (pointerCount() === 0) dragging = false;
+      if (scale < 1.05) resetZoom();
+    }
+
+    stage.addEventListener("pointerup", endPointer);
+    stage.addEventListener("pointercancel", endPointer);
   })();
 })();
