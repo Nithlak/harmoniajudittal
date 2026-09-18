@@ -323,6 +323,10 @@
       if (!form || form.getAttribute("data-built") === "1") return;
       form.setAttribute("data-built", "1");
       page.fields.forEach(function (field) {
+        if (field.type === "image") {
+          form.appendChild(imageField(field));
+          return;
+        }
         var label = document.createElement("label");
         label.className = "wide";
         label.appendChild(document.createTextNode(field.label));
@@ -333,6 +337,127 @@
         form.appendChild(label);
       });
       form.addEventListener("submit", function (e) { e.preventDefault(); });
+      bindPageImages(form);
+    });
+  }
+
+  function imageField(field) {
+    var wrap = document.createElement("div");
+    wrap.className = "page-image wide";
+    wrap.setAttribute("data-image-field", field.key);
+    wrap.setAttribute("data-default", field.def || "");
+    var title = document.createElement("p");
+    title.className = "page-image__label";
+    title.textContent = field.label;
+    wrap.appendChild(title);
+    var drop = document.createElement("div");
+    drop.className = "drop drop--page";
+    var preview = document.createElement("img");
+    preview.alt = "El\u0151n\u00e9zet";
+    preview.hidden = true;
+    var copy = document.createElement("div");
+    copy.className = "drop__copy";
+    copy.innerHTML = "<strong>K\u00e9p felt\u00f6lt\u00e9se</strong><span>H\u00fazd ide, vagy kattints a v\u00e1laszt\u00e1shoz.</span>";
+    var file = document.createElement("input");
+    file.type = "file";
+    file.accept = "image/jpeg,image/png,image/webp,image/gif";
+    file.setAttribute("aria-hidden", "true");
+    file.tabIndex = -1;
+    drop.appendChild(preview);
+    drop.appendChild(copy);
+    drop.appendChild(file);
+    wrap.appendChild(drop);
+    var actions = document.createElement("div");
+    actions.className = "panel-actions drop-actions";
+    var pick = document.createElement("button");
+    pick.className = "btn btn--ghost btn--tiny";
+    pick.type = "button";
+    pick.textContent = "K\u00e9p kiv\u00e1laszt\u00e1sa";
+    pick.setAttribute("data-pick", "");
+    var reset = document.createElement("button");
+    reset.className = "btn btn--ghost btn--tiny";
+    reset.type = "button";
+    reset.textContent = "Eredeti k\u00e9p";
+    reset.setAttribute("data-reset", "");
+    actions.appendChild(pick);
+    actions.appendChild(reset);
+    wrap.appendChild(actions);
+    var status = document.createElement("p");
+    status.className = "hint page-image__status";
+    wrap.appendChild(status);
+    var hidden = document.createElement("input");
+    hidden.type = "hidden";
+    hidden.name = field.key;
+    wrap.appendChild(hidden);
+    return wrap;
+  }
+
+  function showPageImage(box, src) {
+    var hidden = box.querySelector('input[type="hidden"]');
+    var preview = box.querySelector("img");
+    var copy = box.querySelector(".drop__copy");
+    if (hidden) hidden.value = src || "";
+    window.HJStore.resolveImage(src || "", function (url) {
+      var show = !!url;
+      if (preview) {
+        preview.hidden = !show;
+        if (show) preview.src = url;
+      }
+      if (copy) copy.hidden = show;
+    });
+  }
+
+  function bindPageImages(form) {
+    form.querySelectorAll(".page-image").forEach(function (box) {
+      if (box.getAttribute("data-bound") === "1") return;
+      box.setAttribute("data-bound", "1");
+      var drop = box.querySelector(".drop");
+      var file = box.querySelector('input[type="file"]');
+      var status = box.querySelector(".page-image__status");
+      var def = box.getAttribute("data-default") || "";
+      var pageId = (form.id || "").replace("page-form-", "");
+      var key = box.getAttribute("data-image-field");
+      function onFile(picked) {
+        if (status) status.textContent = "K\u00e9p bet\u00f6lt\u00e9se...";
+        compressImage(picked, function (dataUrl, err) {
+          if (!dataUrl) {
+            if (status) status.textContent = err;
+            return;
+          }
+          window.HJStore.putImage(dataUrl, "page-" + pageId + "-" + key);
+          showPageImage(box, dataUrl);
+          if (status) status.textContent = "K\u00e9p k\u00e9szen \u00e1ll. Nyomj Ment\u00e9st.";
+        });
+      }
+      box.querySelector("[data-pick]").addEventListener("click", function () { file.click(); });
+      box.querySelector("[data-reset]").addEventListener("click", function () {
+        showPageImage(box, def);
+        if (status) status.textContent = "Vissza\u00e1ll\u00edtva az eredeti k\u00e9pre.";
+      });
+      file.addEventListener("change", function () {
+        if (file.files && file.files[0]) onFile(file.files[0]);
+        file.value = "";
+      });
+      ["dragenter", "dragover"].forEach(function (name) {
+        drop.addEventListener(name, function (e) {
+          e.preventDefault();
+          drop.classList.add("is-over");
+        });
+      });
+      ["dragleave", "drop"].forEach(function (name) {
+        drop.addEventListener(name, function (e) {
+          e.preventDefault();
+          drop.classList.remove("is-over");
+        });
+      });
+      drop.addEventListener("drop", function (e) {
+        var picked = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+        if (picked) onFile(picked);
+      });
+      drop.addEventListener("click", function (e) {
+        if (e.target === file) return;
+        file.click();
+      });
     });
   }
 
@@ -345,6 +470,11 @@
       if (!form) return;
       var bucket = Object.assign({}, defaults[page.id] || {}, pages[page.id] || {});
       page.fields.forEach(function (field) {
+        if (field.type === "image") {
+          var box = form.querySelector('[data-image-field="' + field.key + '"]');
+          if (box) showPageImage(box, bucket[field.key] || field.def || "");
+          return;
+        }
         if (form[field.key]) form[field.key].value = bucket[field.key] != null ? bucket[field.key] : "";
       });
     });
@@ -418,12 +548,16 @@
       var canvas = document.createElement("canvas");
       canvas.width = w;
       canvas.height = h;
+      var keepAlpha = file.type === "image/png" || file.type === "image/webp";
       var ctx = canvas.getContext("2d");
-      ctx.fillStyle = "#fff";
-      ctx.fillRect(0, 0, w, h);
+      if (!keepAlpha) {
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(0, 0, w, h);
+      }
       ctx.drawImage(img, 0, 0, w, h);
       URL.revokeObjectURL(url);
-      var quality = 0.82;
+      var mime = keepAlpha ? file.type : "image/jpeg";
+      var quality = keepAlpha ? undefined : 0.82;
       canvas.toBlob(function (blob) {
         if (!blob) {
           done(null, "A k\u00e9pet nem siker\u00fclt \u00e1tm\u00e9retezni.");
@@ -433,7 +567,7 @@
         reader.onload = function () { done(reader.result, ""); };
         reader.onerror = function () { done(null, "A k\u00e9pet nem siker\u00fclt beolvasni."); };
         reader.readAsDataURL(blob);
-      }, "image/jpeg", quality);
+      }, mime, quality);
     };
     img.onerror = function () {
       URL.revokeObjectURL(url);
@@ -566,6 +700,16 @@
     setStatus("Ment\u00e9s...");
     var data = collect();
     if (posterSrc && posterSrc.indexOf("data:") === 0) window.HJStore.putImage(posterSrc);
+    var pages = data.pages || {};
+    Object.keys(pages).forEach(function (pid) {
+      var bucket = pages[pid] || {};
+      Object.keys(bucket).forEach(function (key) {
+        var val = bucket[key];
+        if (typeof val === "string" && val.indexOf("data:") === 0) {
+          window.HJStore.putImage(val, "page-" + pid + "-" + key);
+        }
+      });
+    });
     window.HJStore.save(data, function (ok) {
       markSaved();
       setStatus(ok

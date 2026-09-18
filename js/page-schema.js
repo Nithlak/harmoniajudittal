@@ -4,6 +4,30 @@ window.HJ_PAGE_SCHEMA = [
     "title": "Főoldal",
     "fields": [
       {
+        "key": "logo",
+        "label": "Logó (minden oldalon)",
+        "type": "image",
+        "def": "images/logo.png"
+      },
+      {
+        "key": "hero",
+        "label": "Nagy jóga kép",
+        "type": "image",
+        "def": "images/yoga-hero.jpg"
+      },
+      {
+        "key": "practice",
+        "label": "Kis gyakorló kép",
+        "type": "image",
+        "def": "images/yoga-practice.jpg"
+      },
+      {
+        "key": "profile",
+        "label": "Bemutatkozó portré",
+        "type": "image",
+        "def": "images/profile.jpg"
+      },
+      {
         "key": "heroLead",
         "label": "Bevezető",
         "type": "textarea"
@@ -165,6 +189,12 @@ window.HJ_PAGE_SCHEMA = [
     "title": "Jóga",
     "fields": [
       {
+        "key": "photo",
+        "label": "Oldal képe",
+        "type": "image",
+        "def": "images/joga-judit.jpg"
+      },
+      {
         "key": "floatSmall",
         "label": "Kártya felirat",
         "type": "text"
@@ -240,6 +270,24 @@ window.HJ_PAGE_SCHEMA = [
     "id": "aid",
     "title": "Elsősegély",
     "fields": [
+      {
+        "key": "kit",
+        "label": "Bevezető kép",
+        "type": "image",
+        "def": "images/aid-kit.png"
+      },
+      {
+        "key": "infant",
+        "label": "Csecsemő-elsősegély kép",
+        "type": "image",
+        "def": "images/aid-infant.jpg"
+      },
+      {
+        "key": "workplace",
+        "label": "Munkahelyi elsősegély kép",
+        "type": "image",
+        "def": "images/aid-workplace.png"
+      },
       {
         "key": "eyebrow",
         "label": "Oldal felirat",
@@ -382,6 +430,12 @@ window.HJ_PAGE_SCHEMA = [
     "title": "Coaching",
     "fields": [
       {
+        "key": "photo",
+        "label": "Oldal képe",
+        "type": "image",
+        "def": "images/coaching.png"
+      },
+      {
         "key": "eyebrow",
         "label": "Oldal felirat",
         "type": "text"
@@ -437,6 +491,18 @@ window.HJ_PAGE_SCHEMA = [
     "id": "about",
     "title": "Rólam",
     "fields": [
+      {
+        "key": "profile",
+        "label": "Portré",
+        "type": "image",
+        "def": "images/profile.jpg"
+      },
+      {
+        "key": "connect",
+        "label": "Kapcsolódó kép",
+        "type": "image",
+        "def": "images/connect.jpg"
+      },
       {
         "key": "note",
         "label": "Fotó alatti megjegyzés",

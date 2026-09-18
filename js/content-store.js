@@ -118,29 +118,49 @@
     }).catch(function () { return ""; });
   }
 
+  function imageCache() {
+    var c = window.__HJ_IMAGE_CACHE;
+    if (c && typeof c === "object" && !Array.isArray(c)) return c;
+    var map = {};
+    if (typeof c === "string" && c) map["next-event"] = c;
+    window.__HJ_IMAGE_CACHE = map;
+    return map;
+  }
+
+  function cacheGet(id) {
+    return imageCache()[id] || "";
+  }
+
+  function cacheSet(id, val) {
+    imageCache()[id] = val || "";
+  }
+
+  function offloadDataUrl(val, idbKey) {
+    if (!val || String(val).indexOf("data:") !== 0) return val;
+    cacheSet(idbKey, val);
+    idbPut(idbKey, val);
+    return "idb:" + idbKey;
+  }
+
   function persist(data) {
     var copy = clone(data);
-    var img = copy.nextEvent && copy.nextEvent.image;
-    if (img && img.indexOf("data:") === 0 && img.length > 180000) {
-      window.__HJ_IMAGE_CACHE = img;
-      idbPut("next-event", img);
-      copy.nextEvent.image = "idb:next-event";
+    if (copy.nextEvent && copy.nextEvent.image) {
+      copy.nextEvent.image = offloadDataUrl(copy.nextEvent.image, "next-event");
     }
+    var pages = copy.pages || {};
+    Object.keys(pages).forEach(function (pid) {
+      var bucket = pages[pid] || {};
+      Object.keys(bucket).forEach(function (key) {
+        var v = bucket[key];
+        if (typeof v === "string" && v.indexOf("data:") === 0) {
+          bucket[key] = offloadDataUrl(v, "page-" + pid + "-" + key);
+        }
+      });
+    });
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(copy));
       return true;
     } catch (e) {
-      if (img && img.indexOf("data:") === 0) {
-        window.__HJ_IMAGE_CACHE = img;
-        idbPut("next-event", img);
-        copy.nextEvent.image = "idb:next-event";
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(copy));
-          return true;
-        } catch (e2) {
-          return false;
-        }
-      }
       return false;
     }
   }
@@ -223,12 +243,14 @@
       return;
     }
     if (src.indexOf("idb:") === 0) {
-      if (window.__HJ_IMAGE_CACHE) {
-        done(window.__HJ_IMAGE_CACHE);
+      var id = src.slice(4);
+      var hit = cacheGet(id);
+      if (hit) {
+        done(hit);
         return;
       }
-      idbGet(src.slice(4)).then(function (url) {
-        if (url) window.__HJ_IMAGE_CACHE = url;
+      idbGet(id).then(function (url) {
+        if (url) cacheSet(id, url);
         done(url || "");
       });
       return;
@@ -331,11 +353,29 @@
     });
   }
 
+  function applyPageImages(data) {
+    var pages = (data && data.pages) || {};
+    document.querySelectorAll("[data-image]").forEach(function (el) {
+      var path = String(el.getAttribute("data-image") || "").split(".");
+      if (path.length < 2) return;
+      var bucket = pages[path[0]];
+      if (!bucket) return;
+      var altKey = el.getAttribute("data-image-alt");
+      if (altKey && bucket[altKey] != null) el.alt = String(bucket[altKey]);
+      if (bucket[path[1]] == null || bucket[path[1]] === "") return;
+      var src = String(bucket[path[1]]);
+      resolveImage(src, function (url) {
+        if (url) el.src = url;
+      });
+    });
+  }
+
   function ready(data) {
     applyEvents(data);
     renderNextEvent(data);
     renderCalendarVisibility(data);
     applyPageCopy(data);
+    applyPageImages(data);
     document.dispatchEvent(new Event("hj-content-ready"));
   }
 
@@ -434,9 +474,10 @@
       return { ok: true };
     },
     resolveImage: resolveImage,
-    putImage: function (dataUrl) {
-      window.__HJ_IMAGE_CACHE = dataUrl || "";
-      if (dataUrl) idbPut("next-event", dataUrl);
+    putImage: function (dataUrl, key) {
+      var id = key || "next-event";
+      cacheSet(id, dataUrl || "");
+      if (dataUrl) idbPut(id, dataUrl);
     },
     current: function () { return window.HJ_CONTENT ? clone(window.HJ_CONTENT) : clone(DEFAULT_CONTENT); },
     save: function (data, done) {
@@ -446,6 +487,7 @@
       renderNextEvent(next);
       renderCalendarVisibility(next);
       applyPageCopy(next);
+      applyPageImages(next);
       document.dispatchEvent(new Event("hj-content-ready"));
       if (done) done(ok);
       postApi(next);

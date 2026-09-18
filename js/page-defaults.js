@@ -1,5 +1,9 @@
 window.HJ_PAGE_DEFAULTS = {
   "home": {
+    "logo": "images/logo.png",
+    "hero": "images/yoga-hero.jpg",
+    "practice": "images/yoga-practice.jpg",
+    "profile": "images/profile.jpg",
     "heroLead": "A főoldal az iránytű. A jóga, az elsősegély és a coaching saját oldalon, saját ritmusban.",
     "featJoga": "Jóga",
     "featJogaSmall": "Lágy mozgás, tiszta tudás",
@@ -33,6 +37,7 @@ window.HJ_PAGE_DEFAULTS = {
     "fbSmall": "Üzenet Facebookon"
   },
   "joga": {
+    "photo": "images/joga-judit.jpg",
     "floatSmall": "Jóga",
     "floatStrong": "A testedhez igazítva",
     "eyebrow": "Jóga",
@@ -49,6 +54,9 @@ window.HJ_PAGE_DEFAULTS = {
     "hathaText": "Klasszikus aszanák, tudatos légzés és belső nyugalom. Erőt, rugalmasságot és kiegyensúlyozottabb hétköznapokat hoz kezdőknek és gyakorlóknak egyaránt."
   },
   "aid": {
+    "kit": "images/aid-kit.png",
+    "infant": "images/aid-infant.jpg",
+    "workplace": "images/aid-workplace.png",
     "eyebrow": "Elsősegélynyújtás",
     "h1": "Életmentő elsősegélynyújtó",
     "h1Em": "képzések",
@@ -78,6 +86,7 @@ window.HJ_PAGE_DEFAULTS = {
     "c2Cta": "Ajánlatot kérek"
   },
   "coach": {
+    "photo": "images/coaching.png",
     "eyebrow": "Coaching",
     "h1": "Tisztább irány,",
     "h1Em": "támogató kísérés",
@@ -90,6 +99,8 @@ window.HJ_PAGE_DEFAULTS = {
     "yogaText": "A coaching beszélgetés során a téged foglalkoztató kérdéssel dolgozunk. Az alkalom része egy körülbelül 20 perces, személyre szabott jógagyakorlat is, amely az aktuális helyzetedhez kapcsolódik. A mozgás és a légzés segíthet lelassulni, más szemszögből ránézni a problémádra, és közelebb kerülni a saját megoldásodhoz. Jógás előképzettségre nincs szükség."
   },
   "about": {
+    "profile": "images/profile.jpg",
+    "connect": "images/connect.jpg",
     "note": "A bemutatkozó portré helye",
     "eyebrow": "Bemutatkozás",
     "name": "Tóth Judit",

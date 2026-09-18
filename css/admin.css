@@ -376,6 +376,30 @@ input:focus, textarea:focus, select:focus {
 
 .drop-actions { margin-top: 10px; }
 
+.page-image {
+  margin-top: 4px;
+}
+
+.page-image__label {
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+
+.drop--page {
+  min-height: 140px;
+  margin-top: 0;
+}
+
+.drop--page img {
+  height: 180px;
+  object-fit: contain;
+  background: rgba(255,255,255,0.35);
+}
+
+.page-image__status {
+  margin: 8px 0 0;
+}
+
 .live {
   margin-top: 18px;
   padding: 14px;
