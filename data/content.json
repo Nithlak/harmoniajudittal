@@ -1,6 +1,25 @@
 {
   "nextEvent": {
     "visible": true,
+    "title": "NIA White Belt",
+    "titleEm": "órarend",
+    "image": "images/nia-orarend-1.png",
+    "image2": "images/nia-orarend-2.png",
+    "imageAlt": "NIA White Belt órarend — 2026. szeptember 19–21., Budapest",
+    "image2Alt": "NIA White Belt órarend — 2026. szeptember 22–24., Budapest",
+    "lead": "Kedvesek!",
+    "p1": "Hat napos Nia White Belt képzés Budapesten, Brezina Kingával. Az órarend a napok ritmusát mutatja: sessionök, Nia órák, térteremtés és pihenők.",
+    "p2": "A képzés szeptember 19-én, szombaton kezdődik, és 24-én, csütörtökön a Fehér Öv Ünneppel zárul.",
+    "when": "2026. szeptember 19–24.",
+    "price": "",
+    "place": "Budapest\nBrezina Kinga",
+    "cta": "Jelentkezem a képzésre",
+    "ctaHref": "kapcsolat.html",
+    "date": "2026-09-19",
+    "time": "09:45"
+  },
+  "prevEvent": {
+    "visible": true,
     "title": "Őszi jógaóra",
     "titleEm": "Atkáron",
     "image": "images/oszi-joga.png",
@@ -11,20 +30,20 @@
     "when": "2026. szeptember 10. • 18:00",
     "price": "1 000 Ft / alkalom",
     "place": "Egressy Gábor Művelődési Ház és Könyvtár\nAtkár, Fő út 46.",
-    "cta": "Jelentkezem az órára",
+    "cta": "",
     "ctaHref": "kapcsolat.html",
     "date": "2026-09-10",
     "time": "18:00"
   },
   "events": [
     {
-      "id": "ev-2026-09-10",
-      "date": "2026-09-10",
-      "time": "18:00",
+      "id": "ev-2026-09-19",
+      "date": "2026-09-19",
+      "time": "09:45",
       "type": "joga",
-      "title": "Őszi jógaóra",
-      "place": "Egressy Gábor Művelődési Ház és Könyvtár, Atkár, Fő út 46.",
-      "note": "1 000 Ft / alkalom",
+      "title": "NIA White Belt",
+      "place": "Budapest · Brezina Kinga",
+      "note": "2026. szeptember 19–24.",
       "href": "kapcsolat.html"
     }
   ],

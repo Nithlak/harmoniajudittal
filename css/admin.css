@@ -374,7 +374,20 @@ input:focus, textarea:focus, select:focus {
   overflow: hidden;
 }
 
-.drop-actions { margin-top: 10px; }
+.drop-pair {
+  display: grid;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+@media (min-width: 900px) {
+  .drop-pair { grid-template-columns: 1fr 1fr; }
+}
+
+.drop-label {
+  margin: 0 0 8px;
+  font-weight: 600;
+}
 
 .page-image {
   margin-top: 4px;
@@ -385,15 +398,127 @@ input:focus, textarea:focus, select:focus {
   font-weight: 600;
 }
 
-.drop--page {
-  min-height: 140px;
-  margin-top: 0;
+.crop {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  overflow: hidden;
+  border: 1.5px dashed rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.28);
+  user-select: none;
+  touch-action: none;
 }
 
-.drop--page img {
-  height: 180px;
-  object-fit: contain;
-  background: rgba(255,255,255,0.35);
+.crop.is-over {
+  border-color: var(--teal);
+  background: rgba(255,255,255,0.5);
+}
+
+.crop--circle,
+.crop--circle-sm {
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+
+.crop--circle { max-width: 280px; }
+
+.crop--circle-sm { max-width: 150px; }
+
+.crop--portrait {
+  aspect-ratio: 4 / 5;
+  border-radius: 24px;
+  max-width: 240px;
+}
+
+.crop--tall {
+  aspect-ratio: 3 / 4;
+  border-radius: 22px;
+  max-width: 240px;
+}
+
+.crop--wide {
+  aspect-ratio: 4 / 3;
+  border-radius: 22px;
+  max-width: 360px;
+}
+
+.crop--soft {
+  aspect-ratio: 5 / 4;
+  border-radius: 22px 22px 42% 42%;
+  max-width: 340px;
+  background: #eaf4ef;
+}
+
+.crop--logo {
+  aspect-ratio: 12 / 5;
+  border-radius: 16px;
+  max-width: 320px;
+  background: rgba(255,255,255,0.55);
+}
+
+.crop__stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  cursor: grab;
+  z-index: 1;
+}
+
+.crop__stage.is-drag { cursor: grabbing; }
+
+.crop__img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: none;
+  height: auto;
+  display: block;
+  pointer-events: none;
+  background: transparent;
+}
+
+.crop__copy {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  padding: 18px 14px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.crop input[type="file"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.crop-zoom {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 360px;
+  margin: 10px 0 0;
+}
+
+.crop-zoom span {
+  width: 18px;
+  text-align: center;
+  font-size: 1.15rem;
+  color: var(--muted);
+}
+
+.crop-zoom input[type="range"] {
+  flex: 1;
+  accent-color: var(--teal);
+}
+
+.crop-hint {
+  max-width: 36rem;
+  margin: 8px 0 0;
 }
 
 .page-image__status {

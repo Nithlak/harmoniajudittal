@@ -7,25 +7,37 @@ window.HJ_PAGE_SCHEMA = [
         "key": "logo",
         "label": "Logó (minden oldalon)",
         "type": "image",
-        "def": "images/logo.png"
+        "def": "images/logo.png",
+        "frame": "logo",
+        "ratio": "12/5",
+        "fit": "contain"
       },
       {
         "key": "hero",
         "label": "Nagy jóga kép",
         "type": "image",
-        "def": "images/yoga-hero.jpg"
+        "def": "images/yoga-hero.jpg",
+        "frame": "circle",
+        "ratio": "1",
+        "fit": "cover"
       },
       {
         "key": "practice",
         "label": "Kis gyakorló kép",
         "type": "image",
-        "def": "images/yoga-practice.jpg"
+        "def": "images/yoga-practice.jpg",
+        "frame": "circle-sm",
+        "ratio": "1",
+        "fit": "cover"
       },
       {
         "key": "profile",
         "label": "Bemutatkozó portré",
         "type": "image",
-        "def": "images/profile.jpg"
+        "def": "images/profile.jpg",
+        "frame": "portrait",
+        "ratio": "4/5",
+        "fit": "cover"
       },
       {
         "key": "heroLead",
@@ -192,7 +204,10 @@ window.HJ_PAGE_SCHEMA = [
         "key": "photo",
         "label": "Oldal képe",
         "type": "image",
-        "def": "images/joga-judit.jpg"
+        "def": "images/joga-judit.jpg",
+        "frame": "tall",
+        "ratio": "3/4",
+        "fit": "cover"
       },
       {
         "key": "floatSmall",
@@ -274,19 +289,28 @@ window.HJ_PAGE_SCHEMA = [
         "key": "kit",
         "label": "Bevezető kép",
         "type": "image",
-        "def": "images/aid-kit.png"
+        "def": "images/aid-kit.png",
+        "frame": "wide",
+        "ratio": "4/3",
+        "fit": "cover"
       },
       {
         "key": "infant",
         "label": "Csecsemő-elsősegély kép",
         "type": "image",
-        "def": "images/aid-infant.jpg"
+        "def": "images/aid-infant.jpg",
+        "frame": "tall",
+        "ratio": "3/4",
+        "fit": "cover"
       },
       {
         "key": "workplace",
         "label": "Munkahelyi elsősegély kép",
         "type": "image",
-        "def": "images/aid-workplace.png"
+        "def": "images/aid-workplace.png",
+        "frame": "tall",
+        "ratio": "3/4",
+        "fit": "cover"
       },
       {
         "key": "eyebrow",
@@ -433,7 +457,10 @@ window.HJ_PAGE_SCHEMA = [
         "key": "photo",
         "label": "Oldal képe",
         "type": "image",
-        "def": "images/coaching.png"
+        "def": "images/coaching.png",
+        "frame": "soft",
+        "ratio": "5/4",
+        "fit": "contain"
       },
       {
         "key": "eyebrow",
@@ -495,13 +522,19 @@ window.HJ_PAGE_SCHEMA = [
         "key": "profile",
         "label": "Portré",
         "type": "image",
-        "def": "images/profile.jpg"
+        "def": "images/profile.jpg",
+        "frame": "portrait",
+        "ratio": "4/5",
+        "fit": "cover"
       },
       {
         "key": "connect",
         "label": "Kapcsolódó kép",
         "type": "image",
-        "def": "images/connect.jpg"
+        "def": "images/connect.jpg",
+        "frame": "circle-sm",
+        "ratio": "1",
+        "fit": "cover"
       },
       {
         "key": "note",

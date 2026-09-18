@@ -7,33 +7,40 @@
     "janu\u00e1r", "febru\u00e1r", "m\u00e1rcius", "\u00e1prilis", "m\u00e1jus", "j\u00fanius",
     "j\u00falius", "augusztus", "szeptember", "okt\u00f3ber", "november", "december"
   ];
-  var DEFAULT_POSTER = "images/oszi-joga.png";
+  var DEFAULT_POSTER = "images/nia-orarend-1.png";
+  var DEFAULT_POSTER2 = "images/nia-orarend-2.png";
+  var DEFAULT_PREV_POSTER = "images/oszi-joga.png";
 
   var loginView = $("#login-view");
   var panelView = $("#panel-view");
   var loginForm = $("#login-form");
   var loginErr = $("#login-error");
   var eventForm = $("#event-form");
+  var prevEventForm = $("#prev-event-form");
   var calForm = $("#cal-form");
   var calList = $("#cal-list");
   var calMode = $("#cal-mode");
   var calSubmit = $("#cal-submit");
   var saveBtn = $("#save-btn");
   var saveStatus = $("#save-status");
-  var dropZone = $("#drop-zone");
-  var posterFile = $("#poster-file");
-  var posterPreview = $("#poster-preview");
-  var posterStatus = $("#poster-status");
-  var dropCopy = $("#drop-copy");
   var liveImage = $("#live-image");
   var liveTitle = $("#live-title");
   var liveWhen = $("#live-when");
+  var prevLiveImage = $("#prev-live-image");
+  var prevLiveTitle = $("#prev-live-title");
+  var prevLiveWhen = $("#prev-live-when");
   var calVisible = $("#cal-visible");
 
   var editingId = "";
   var posterSrc = DEFAULT_POSTER;
+  var posterSrc2 = DEFAULT_POSTER2;
+  var prevPosterSrc = DEFAULT_PREV_POSTER;
+  var nextDrop = null;
+  var nextDrop2 = null;
+  var prevDrop = null;
   var savedSnap = "";
   var whenTouched = false;
+  var prevWhenTouched = false;
 
   function typeLabel(type) {
     return type === "aid" ? "Els\u0151seg\u00e9ly" : type === "coach" ? "Coaching" : "J\u00f3ga";
@@ -67,28 +74,18 @@
     savedSnap = JSON.stringify(collect());
   }
 
-  function showPoster(src) {
-    posterSrc = src || "";
-    window.HJStore.resolveImage(posterSrc, function (url) {
-      var show = !!url;
-      posterPreview.hidden = !show;
-      dropCopy.hidden = show;
-      if (show) {
-        posterPreview.src = url;
-        liveImage.src = url;
-        liveImage.hidden = false;
-      } else {
-        liveImage.removeAttribute("src");
-        liveImage.hidden = true;
-      }
-    });
-    updateLive();
-  }
-
   function updateLive() {
+    if (!eventForm || !liveTitle) return;
     var title = (eventForm.title.value || "") + (eventForm.titleEm.value ? " " + eventForm.titleEm.value : "");
     liveTitle.textContent = title || "K\u00f6vetkez\u0151 esem\u00e9ny";
     liveWhen.textContent = eventForm.when.value || formatWhen(eventForm.date.value, eventForm.time.value);
+  }
+
+  function updatePrevLive() {
+    if (!prevEventForm || !prevLiveTitle) return;
+    var title = (prevEventForm.title.value || "") + (prevEventForm.titleEm.value ? " " + prevEventForm.titleEm.value : "");
+    prevLiveTitle.textContent = title || "El\u0151z\u0151 esem\u00e9ny";
+    prevLiveWhen.textContent = prevEventForm.when.value || formatWhen(prevEventForm.date.value, prevEventForm.time.value);
   }
 
   function syncWhen() {
@@ -97,52 +94,91 @@
     updateLive();
   }
 
-  function fillEvent() {
-    var ev = (window.HJStore.current().nextEvent) || {};
-    eventForm.visible.checked = ev.visible !== false;
-    eventForm.title.value = ev.title || "";
-    eventForm.titleEm.value = ev.titleEm || "";
-    eventForm.date.value = ev.date || "";
-    eventForm.time.value = ev.time || "";
-    eventForm.when.value = ev.when || formatWhen(ev.date, ev.time);
-    eventForm.price.value = ev.price || "";
-    eventForm.place.value = ev.place || "";
-    eventForm.lead.value = ev.lead || "";
-    eventForm.p1.value = ev.p1 || "";
-    eventForm.p2.value = ev.p2 || "";
-    eventForm.imageAlt.value = ev.imageAlt || "";
-    eventForm.cta.value = ev.cta || "Jelentkezem az \u00f3r\u00e1ra";
-    var href = ev.ctaHref || "kapcsolat.html";
-    if (![].some.call(eventForm.ctaHref.options, function (o) { return o.value === href; })) {
+  function syncPrevWhen() {
+    if (prevWhenTouched && prevEventForm.when.value) return;
+    prevEventForm.when.value = formatWhen(prevEventForm.date.value, prevEventForm.time.value);
+    updatePrevLive();
+  }
+
+  function setHref(form, href) {
+    href = href || "kapcsolat.html";
+    if (![].some.call(form.ctaHref.options, function (o) { return o.value === href; })) {
       var opt = document.createElement("option");
       opt.value = href;
       opt.textContent = href;
-      eventForm.ctaHref.appendChild(opt);
+      form.ctaHref.appendChild(opt);
     }
-    eventForm.ctaHref.value = href;
+    form.ctaHref.value = href;
+  }
+
+  function fillEventForm(form, ev, defaults) {
+    ev = ev || {};
+    defaults = defaults || {};
+    form.visible.checked = ev.visible !== false;
+    form.title.value = ev.title || "";
+    form.titleEm.value = ev.titleEm || "";
+    form.date.value = ev.date || "";
+    form.time.value = ev.time || "";
+    form.when.value = ev.when || formatWhen(ev.date, ev.time);
+    form.price.value = ev.price || "";
+    form.place.value = ev.place || "";
+    form.lead.value = ev.lead || "";
+    form.p1.value = ev.p1 || "";
+    form.p2.value = ev.p2 || "";
+    form.imageAlt.value = ev.imageAlt || "";
+    if (form.image2Alt) form.image2Alt.value = ev.image2Alt || "";
+    form.cta.value = ev.cta != null ? ev.cta : (defaults.cta || "");
+    setHref(form, ev.ctaHref);
+  }
+
+  function fillEvent() {
+    var data = window.HJStore.current();
+    var ev = data.nextEvent || {};
+    fillEventForm(eventForm, ev, { cta: "Jelentkezem az \u00f3r\u00e1ra" });
     whenTouched = false;
-    showPoster(ev.image || DEFAULT_POSTER);
+    posterSrc = ev.image || DEFAULT_POSTER;
+    posterSrc2 = ev.image2 || "";
+    if (nextDrop) nextDrop.show(posterSrc);
+    if (nextDrop2) nextDrop2.show(posterSrc2);
     updateLive();
   }
 
-  function readEvent() {
-    return {
-      visible: eventForm.visible.checked,
-      title: eventForm.title.value.trim(),
-      titleEm: eventForm.titleEm.value.trim(),
-      image: posterSrc || DEFAULT_POSTER,
-      imageAlt: eventForm.imageAlt.value.trim() || eventForm.title.value.trim(),
-      date: eventForm.date.value,
-      time: eventForm.time.value,
-      lead: eventForm.lead.value.trim(),
-      p1: eventForm.p1.value.trim(),
-      p2: eventForm.p2.value.trim(),
-      when: eventForm.when.value.trim() || formatWhen(eventForm.date.value, eventForm.time.value),
-      price: eventForm.price.value.trim(),
-      place: eventForm.place.value.replace(/\r\n/g, "\n"),
-      cta: eventForm.cta.value.trim() || "Jelentkezem az \u00f3r\u00e1ra",
-      ctaHref: eventForm.ctaHref.value || "kapcsolat.html"
+  function fillPrevEvent() {
+    if (!prevEventForm) return;
+    var ev = (window.HJStore.current().prevEvent) || {};
+    fillEventForm(prevEventForm, ev, { cta: "" });
+    prevWhenTouched = false;
+    prevPosterSrc = ev.image || DEFAULT_PREV_POSTER;
+    if (prevDrop) prevDrop.show(prevPosterSrc);
+    updatePrevLive();
+  }
+
+  function readEvent(form, image, extra) {
+    extra = extra || {};
+    var cta = form.cta.value.trim();
+    if (extra.requireCta && !cta) cta = "Jelentkezem az \u00f3r\u00e1ra";
+    var out = {
+      visible: form.visible.checked,
+      title: form.title.value.trim(),
+      titleEm: form.titleEm.value.trim(),
+      image: image || "",
+      imageAlt: form.imageAlt.value.trim() || form.title.value.trim(),
+      date: form.date.value,
+      time: form.time.value,
+      lead: form.lead.value.trim(),
+      p1: form.p1.value.trim(),
+      p2: form.p2.value.trim(),
+      when: form.when.value.trim() || formatWhen(form.date.value, form.time.value),
+      price: form.price.value.trim(),
+      place: form.place.value.replace(/\r\n/g, "\n"),
+      cta: cta,
+      ctaHref: form.ctaHref.value || "kapcsolat.html"
     };
+    if (extra.withImage2) {
+      out.image2 = extra.image2 || "";
+      out.image2Alt = form.image2Alt ? form.image2Alt.value.trim() : "";
+    }
+    return out;
   }
 
   function resetCalForm() {
@@ -303,7 +339,12 @@
 
   function collect() {
     var data = window.HJStore.current();
-    data.nextEvent = readEvent();
+    data.nextEvent = readEvent(eventForm, posterSrc, {
+      requireCta: true,
+      withImage2: true,
+      image2: posterSrc2
+    });
+    data.prevEvent = readEvent(prevEventForm, prevPosterSrc, { requireCta: false });
     data.settings = data.settings || {};
     data.settings.calendarVisible = calVisible.checked;
     data.pages = readPages();
@@ -346,27 +387,58 @@
     wrap.className = "page-image wide";
     wrap.setAttribute("data-image-field", field.key);
     wrap.setAttribute("data-default", field.def || "");
+    wrap.setAttribute("data-frame", field.frame || "wide");
+    wrap.setAttribute("data-ratio", field.ratio || "4/3");
+    wrap.setAttribute("data-fit", field.fit || "cover");
     var title = document.createElement("p");
     title.className = "page-image__label";
     title.textContent = field.label;
     wrap.appendChild(title);
-    var drop = document.createElement("div");
-    drop.className = "drop drop--page";
+    var crop = document.createElement("div");
+    crop.className = "crop crop--" + (field.frame || "wide");
+    crop.setAttribute("data-crop", "");
+    var stage = document.createElement("div");
+    stage.className = "crop__stage";
     var preview = document.createElement("img");
+    preview.className = "crop__img";
     preview.alt = "El\u0151n\u00e9zet";
     preview.hidden = true;
+    preview.draggable = false;
+    stage.appendChild(preview);
     var copy = document.createElement("div");
-    copy.className = "drop__copy";
+    copy.className = "drop__copy crop__copy";
     copy.innerHTML = "<strong>K\u00e9p felt\u00f6lt\u00e9se</strong><span>H\u00fazd ide, vagy kattints a v\u00e1laszt\u00e1shoz.</span>";
     var file = document.createElement("input");
     file.type = "file";
     file.accept = "image/jpeg,image/png,image/webp,image/gif";
     file.setAttribute("aria-hidden", "true");
     file.tabIndex = -1;
-    drop.appendChild(preview);
-    drop.appendChild(copy);
-    drop.appendChild(file);
-    wrap.appendChild(drop);
+    crop.appendChild(stage);
+    crop.appendChild(copy);
+    crop.appendChild(file);
+    wrap.appendChild(crop);
+    var zoom = document.createElement("div");
+    zoom.className = "crop-zoom";
+    zoom.hidden = true;
+    zoom.innerHTML = "<span aria-hidden=\"true\">\u2212</span>";
+    var range = document.createElement("input");
+    range.type = "range";
+    range.min = "1";
+    range.max = "3";
+    range.step = "0.01";
+    range.value = "1";
+    range.setAttribute("data-zoom", "");
+    range.setAttribute("aria-label", "Nagy\u00edt\u00e1s");
+    zoom.appendChild(range);
+    var plus = document.createElement("span");
+    plus.setAttribute("aria-hidden", "true");
+    plus.textContent = "+";
+    zoom.appendChild(plus);
+    wrap.appendChild(zoom);
+    var hint = document.createElement("p");
+    hint.className = "hint crop-hint";
+    hint.textContent = "H\u00fazd a k\u00e9pet a keretben. A cs\u00faszk\u00e1val nagy\u00edthatsz vagy kicsiny\u00edthetsz \u2014 pontosan azt l\u00e1tod, ami az oldalon megjelenik.";
+    wrap.appendChild(hint);
     var actions = document.createElement("div");
     actions.className = "panel-actions drop-actions";
     var pick = document.createElement("button");
@@ -392,18 +464,232 @@
     return wrap;
   }
 
+  function frameSize(box) {
+    var raw = box.getAttribute("data-ratio") || "1";
+    var parts = String(raw).split("/");
+    var ratio = parts.length === 2 ? Number(parts[0]) / Number(parts[1]) : Number(raw);
+    if (!ratio || !isFinite(ratio)) ratio = 1;
+    var w = 1000;
+    return { w: w, h: Math.round(w / ratio) };
+  }
+
+  function clampOffset(value, size, frame) {
+    if (size <= frame + 0.5) return (frame - size) / 2;
+    return Math.max(frame - size, Math.min(0, value));
+  }
+
+  function cropMetrics(box) {
+    var state = box._crop;
+    var frame = frameSize(box);
+    var fit = box.getAttribute("data-fit") || "cover";
+    var zoom = state.zoom || 1;
+    var base = fit === "contain"
+      ? Math.min(frame.w / state.nw, frame.h / state.nh)
+      : Math.max(frame.w / state.nw, frame.h / state.nh);
+    var dw = state.nw * base * zoom;
+    var dh = state.nh * base * zoom;
+    return { frame: frame, fit: fit, zoom: zoom, base: base, dw: dw, dh: dh };
+  }
+
+  function applyCrop(box) {
+    var state = box._crop;
+    var img = box.querySelector(".crop__img");
+    if (!state || !state.nw || !img) return;
+    var m = cropMetrics(box);
+    state.ox = clampOffset(state.ox, m.dw, m.frame.w);
+    state.oy = clampOffset(state.oy, m.dh, m.frame.h);
+    img.style.width = (m.dw / m.frame.w * 100) + "%";
+    img.style.height = (m.dh / m.frame.h * 100) + "%";
+    img.style.left = (state.ox / m.frame.w * 100) + "%";
+    img.style.top = (state.oy / m.frame.h * 100) + "%";
+  }
+
+  function setCropZoom(box, zoom, keepCenter) {
+    var state = box._crop;
+    if (!state || !state.nw) return;
+    zoom = Math.max(1, Math.min(3, zoom));
+    if (keepCenter) {
+      var mOld = cropMetrics(box);
+      var cx = mOld.frame.w / 2;
+      var cy = mOld.frame.h / 2;
+      var px = (cx - state.ox) / mOld.dw;
+      var py = (cy - state.oy) / mOld.dh;
+      state.zoom = zoom;
+      var mNew = cropMetrics(box);
+      state.ox = cx - px * mNew.dw;
+      state.oy = cy - py * mNew.dh;
+    } else {
+      state.zoom = zoom;
+    }
+    applyCrop(box);
+  }
+
+  function cropToDataUrl(box, done) {
+    var state = box._crop;
+    var img = box.querySelector(".crop__img");
+    if (!state || !state.nw || !img) {
+      done("");
+      return;
+    }
+    if (!img.naturalWidth) {
+      var once = function () {
+        img.removeEventListener("load", once);
+        img.removeEventListener("error", fail);
+        cropToDataUrl(box, done);
+      };
+      var fail = function () {
+        img.removeEventListener("load", once);
+        img.removeEventListener("error", fail);
+        done("");
+      };
+      img.addEventListener("load", once);
+      img.addEventListener("error", fail);
+      return;
+    }
+    var m = cropMetrics(box);
+    state.ox = clampOffset(state.ox, m.dw, m.frame.w);
+    state.oy = clampOffset(state.oy, m.dh, m.frame.h);
+    var long = 1200;
+    var cw;
+    var ch;
+    if (m.frame.w >= m.frame.h) {
+      cw = long;
+      ch = Math.max(1, Math.round(long * m.frame.h / m.frame.w));
+    } else {
+      ch = long;
+      cw = Math.max(1, Math.round(long * m.frame.w / m.frame.h));
+    }
+    var canvas = document.createElement("canvas");
+    canvas.width = cw;
+    canvas.height = ch;
+    var ctx = canvas.getContext("2d");
+    if (!state.alpha) {
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, cw, ch);
+    }
+    var sx = -state.ox / m.dw * state.nw;
+    var sy = -state.oy / m.dh * state.nh;
+    var sw = m.frame.w / m.dw * state.nw;
+    var sh = m.frame.h / m.dh * state.nh;
+    sx = Math.max(0, Math.min(state.nw - 1, sx));
+    sy = Math.max(0, Math.min(state.nh - 1, sy));
+    sw = Math.max(1, Math.min(state.nw - sx, sw));
+    sh = Math.max(1, Math.min(state.nh - sy, sh));
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch);
+    var mime = state.alpha ? "image/png" : "image/jpeg";
+    var quality = state.alpha ? undefined : 0.86;
+    canvas.toBlob(function (blob) {
+      if (!blob) {
+        done("");
+        return;
+      }
+      var reader = new FileReader();
+      reader.onload = function () { done(reader.result || ""); };
+      reader.onerror = function () { done(""); };
+      reader.readAsDataURL(blob);
+    }, mime, quality);
+  }
+
+  function queueRaster(box) {
+    if (!box._crop || !box._crop.dirty) return;
+    clearTimeout(box._cropTimer);
+    box._cropTimer = setTimeout(function () {
+      var form = box.closest("form");
+      var pageId = (form && form.id ? form.id : "").replace("page-form-", "");
+      var key = box.getAttribute("data-image-field");
+      var hidden = box.querySelector('input[type="hidden"]');
+      cropToDataUrl(box, function (url) {
+        if (!url) return;
+        if (hidden) hidden.value = url;
+        if (pageId && key) window.HJStore.putImage(url, "page-" + pageId + "-" + key);
+      });
+    }, 120);
+  }
+
+  function flushCrops(done) {
+    var boxes = [];
+    document.querySelectorAll(".page-image").forEach(function (box) {
+      if (box._crop && box._crop.ready && box._crop.dirty) boxes.push(box);
+    });
+    if (!boxes.length) {
+      done();
+      return;
+    }
+    var left = boxes.length;
+    boxes.forEach(function (box) {
+      clearTimeout(box._cropTimer);
+      var form = box.closest("form");
+      var pageId = (form && form.id ? form.id : "").replace("page-form-", "");
+      var key = box.getAttribute("data-image-field");
+      var hidden = box.querySelector('input[type="hidden"]');
+      cropToDataUrl(box, function (url) {
+        if (url) {
+          if (hidden) hidden.value = url;
+          if (pageId && key) window.HJStore.putImage(url, "page-" + pageId + "-" + key);
+          box._crop.dirty = false;
+        }
+        left -= 1;
+        if (!left) done();
+      });
+    });
+  }
+
+  function setCropSource(box, url, markDirty) {
+    var img = box.querySelector(".crop__img");
+    var copy = box.querySelector(".crop__copy");
+    var zoomWrap = box.querySelector(".crop-zoom");
+    var range = box.querySelector("[data-zoom]");
+    var hidden = box.querySelector('input[type="hidden"]');
+    box._cropGen = (box._cropGen || 0) + 1;
+    var gen = box._cropGen;
+    if (!url) {
+      box._crop = null;
+      if (img) {
+        img.hidden = true;
+        img.removeAttribute("src");
+      }
+      if (copy) copy.hidden = false;
+      if (zoomWrap) zoomWrap.hidden = true;
+      return;
+    }
+    var probe = new Image();
+    probe.onload = function () {
+      if (box._cropGen !== gen) return;
+      box._crop = {
+        nw: probe.naturalWidth,
+        nh: probe.naturalHeight,
+        zoom: 1,
+        ox: 0,
+        oy: 0,
+        alpha: (url.indexOf("data:image/png") === 0) || /\.png(\?|$)/i.test(url),
+        ready: true,
+        dirty: !!markDirty
+      };
+      if (img) {
+        img.hidden = false;
+        img.src = url;
+      }
+      if (copy) copy.hidden = true;
+      if (zoomWrap) zoomWrap.hidden = false;
+      if (range) range.value = "1";
+      applyCrop(box);
+      if (markDirty) queueRaster(box);
+    };
+    probe.onerror = function () {
+      box._crop = null;
+      if (img) img.hidden = true;
+      if (copy) copy.hidden = false;
+      if (zoomWrap) zoomWrap.hidden = true;
+      if (hidden) hidden.value = "";
+    };
+    probe.src = url;
+  }
+
   function showPageImage(box, src) {
     var hidden = box.querySelector('input[type="hidden"]');
-    var preview = box.querySelector("img");
-    var copy = box.querySelector(".drop__copy");
     if (hidden) hidden.value = src || "";
     window.HJStore.resolveImage(src || "", function (url) {
-      var show = !!url;
-      if (preview) {
-        preview.hidden = !show;
-        if (show) preview.src = url;
-      }
-      if (copy) copy.hidden = show;
+      setCropSource(box, url, false);
     });
   }
 
@@ -411,22 +697,23 @@
     form.querySelectorAll(".page-image").forEach(function (box) {
       if (box.getAttribute("data-bound") === "1") return;
       box.setAttribute("data-bound", "1");
-      var drop = box.querySelector(".drop");
+      var crop = box.querySelector("[data-crop]");
+      var stage = box.querySelector(".crop__stage");
       var file = box.querySelector('input[type="file"]');
       var status = box.querySelector(".page-image__status");
+      var range = box.querySelector("[data-zoom]");
       var def = box.getAttribute("data-default") || "";
-      var pageId = (form.id || "").replace("page-form-", "");
-      var key = box.getAttribute("data-image-field");
+      var drag = null;
       function onFile(picked) {
         if (status) status.textContent = "K\u00e9p bet\u00f6lt\u00e9se...";
-        compressImage(picked, function (dataUrl, err) {
+        loadSource(picked, function (dataUrl, err) {
           if (!dataUrl) {
             if (status) status.textContent = err;
             return;
           }
-          window.HJStore.putImage(dataUrl, "page-" + pageId + "-" + key);
-          showPageImage(box, dataUrl);
-          if (status) status.textContent = "K\u00e9p k\u00e9szen \u00e1ll. Nyomj Ment\u00e9st.";
+          if (box.querySelector('input[type="hidden"]')) box.querySelector('input[type="hidden"]').value = dataUrl;
+          setCropSource(box, dataUrl, true);
+          if (status) status.textContent = "H\u00fazd a k\u00e9pet a hely\u00e9re, majd nyomj Ment\u00e9st.";
         });
       }
       box.querySelector("[data-pick]").addEventListener("click", function () { file.click(); });
@@ -439,25 +726,65 @@
         file.value = "";
       });
       ["dragenter", "dragover"].forEach(function (name) {
-        drop.addEventListener(name, function (e) {
+        crop.addEventListener(name, function (e) {
           e.preventDefault();
-          drop.classList.add("is-over");
+          crop.classList.add("is-over");
         });
       });
       ["dragleave", "drop"].forEach(function (name) {
-        drop.addEventListener(name, function (e) {
+        crop.addEventListener(name, function (e) {
           e.preventDefault();
-          drop.classList.remove("is-over");
+          crop.classList.remove("is-over");
         });
       });
-      drop.addEventListener("drop", function (e) {
+      crop.addEventListener("drop", function (e) {
         var picked = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
         if (picked) onFile(picked);
       });
-      drop.addEventListener("click", function (e) {
-        if (e.target === file) return;
-        file.click();
+      box.querySelector(".crop__copy").addEventListener("click", function () { file.click(); });
+      stage.addEventListener("pointerdown", function (e) {
+        if (!box._crop || !box._crop.ready) return;
+        if (e.button && e.button !== 0) return;
+        e.preventDefault();
+        stage.setPointerCapture(e.pointerId);
+        drag = { x: e.clientX, y: e.clientY, ox: box._crop.ox, oy: box._crop.oy };
+        stage.classList.add("is-drag");
       });
+      stage.addEventListener("pointermove", function (e) {
+        if (!drag || !box._crop) return;
+        var rect = stage.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        var frame = frameSize(box);
+        box._crop.ox = drag.ox + (e.clientX - drag.x) / rect.width * frame.w;
+        box._crop.oy = drag.oy + (e.clientY - drag.y) / rect.height * frame.h;
+        box._crop.dirty = true;
+        applyCrop(box);
+      });
+      function endDrag() {
+        if (!drag) return;
+        drag = null;
+        stage.classList.remove("is-drag");
+        queueRaster(box);
+      }
+      stage.addEventListener("pointerup", endDrag);
+      stage.addEventListener("pointercancel", endDrag);
+      stage.addEventListener("wheel", function (e) {
+        if (!box._crop || !box._crop.ready) return;
+        e.preventDefault();
+        var next = (box._crop.zoom || 1) + (e.deltaY < 0 ? 0.08 : -0.08);
+        setCropZoom(box, next, true);
+        box._crop.dirty = true;
+        if (range) range.value = String(box._crop.zoom);
+        queueRaster(box);
+      }, { passive: false });
+      if (range) {
+        range.addEventListener("input", function () {
+          if (!box._crop) return;
+          setCropZoom(box, Number(range.value), true);
+          box._crop.dirty = true;
+        });
+        range.addEventListener("change", function () { queueRaster(box); });
+      }
     });
   }
 
@@ -513,6 +840,7 @@
     calVisible.checked = !data.settings || data.settings.calendarVisible !== false;
     buildPageForms();
     fillEvent();
+    fillPrevEvent();
     resetCalForm();
     fillPageForms();
     fillUsers();
@@ -524,6 +852,60 @@
   function waitStore(fn) {
     if (window.HJStore && window.HJ_CONTENT) fn();
     else document.addEventListener("hj-content-ready", fn, { once: true });
+  }
+
+  function loadSource(file, done) {
+    if (!file || !file.type || file.type.indexOf("image/") !== 0) {
+      done(null, "Csak k\u00e9pf\u00e1jlt lehet felt\u00f6lteni.");
+      return;
+    }
+    if (file.size > 12 * 1024 * 1024) {
+      done(null, "A k\u00e9p t\u00fal nagy. 12 MB alatt legyen.");
+      return;
+    }
+    var img = new Image();
+    var url = URL.createObjectURL(file);
+    img.onload = function () {
+      var max = 1800;
+      var w = img.width;
+      var h = img.height;
+      if (w > max || h > max) {
+        if (w >= h) {
+          h = Math.round(h * max / w);
+          w = max;
+        } else {
+          w = Math.round(w * max / h);
+          h = max;
+        }
+      }
+      var canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      var keepAlpha = file.type === "image/png" || file.type === "image/webp";
+      var ctx = canvas.getContext("2d");
+      if (!keepAlpha) {
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(0, 0, w, h);
+      }
+      ctx.drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      var mime = keepAlpha ? (file.type === "image/webp" ? "image/png" : file.type) : "image/jpeg";
+      canvas.toBlob(function (blob) {
+        if (!blob) {
+          done(null, "A k\u00e9pet nem siker\u00fclt beolvasni.");
+          return;
+        }
+        var reader = new FileReader();
+        reader.onload = function () { done(reader.result, ""); };
+        reader.onerror = function () { done(null, "A k\u00e9pet nem siker\u00fclt beolvasni."); };
+        reader.readAsDataURL(blob);
+      }, mime, keepAlpha ? undefined : 0.92);
+    };
+    img.onerror = function () {
+      URL.revokeObjectURL(url);
+      done(null, "Ezt a k\u00e9pet nem lehet megnyitni.");
+    };
+    img.src = url;
   }
 
   function compressImage(file, done) {
@@ -576,21 +958,85 @@
     img.src = url;
   }
 
-  function onPoster(file) {
-    posterStatus.textContent = "K\u00e9p bet\u00f6lt\u00e9se...";
-    compressImage(file, function (dataUrl, err) {
-      if (!dataUrl) {
-        posterStatus.textContent = err;
-        return;
-      }
-      posterSrc = dataUrl;
-      window.HJStore.putImage(dataUrl);
-      showPoster(dataUrl);
-      if (!eventForm.imageAlt.value) {
-        eventForm.imageAlt.value = eventForm.title.value || file.name.replace(/\.[^.]+$/, "");
-      }
-      posterStatus.textContent = "K\u00e9p k\u00e9szen \u00e1ll. Nyomj Ment\u00e9st.";
+  function bindDropZone(cfg) {
+    var zone = $(cfg.zone);
+    var file = $(cfg.file);
+    var preview = $(cfg.preview);
+    var copy = $(cfg.copy);
+    var status = $(cfg.status);
+    var pick = $(cfg.pick);
+    var reset = $(cfg.reset);
+    var clear = $(cfg.clear);
+    if (!zone || !file) return { show: function () {} };
+    function show(src) {
+      cfg.set(src || "");
+      window.HJStore.resolveImage(src || "", function (url) {
+        var has = !!url;
+        if (preview) {
+          preview.hidden = !has;
+          if (has) preview.src = url;
+          else preview.removeAttribute("src");
+        }
+        if (copy) copy.hidden = has;
+        if (cfg.live) {
+          if (has) {
+            cfg.live.src = url;
+            cfg.live.hidden = false;
+          } else {
+            cfg.live.removeAttribute("src");
+            cfg.live.hidden = true;
+          }
+        }
+      });
+      if (cfg.afterShow) cfg.afterShow();
+    }
+    function onFile(picked) {
+      if (status) status.textContent = "K\u00e9p bet\u00f6lt\u00e9se...";
+      compressImage(picked, function (dataUrl, err) {
+        if (!dataUrl) {
+          if (status) status.textContent = err;
+          return;
+        }
+        window.HJStore.putImage(dataUrl, cfg.idbKey);
+        show(dataUrl);
+        if (cfg.onPicked) cfg.onPicked(dataUrl, picked);
+        if (status) status.textContent = "K\u00e9p k\u00e9szen \u00e1ll. Nyomj Ment\u00e9st.";
+      });
+    }
+    if (pick) pick.addEventListener("click", function () { file.click(); });
+    file.addEventListener("change", function () {
+      if (file.files && file.files[0]) onFile(file.files[0]);
+      file.value = "";
     });
+    ["dragenter", "dragover"].forEach(function (name) {
+      zone.addEventListener(name, function (e) {
+        e.preventDefault();
+        zone.classList.add("is-over");
+      });
+    });
+    ["dragleave", "drop"].forEach(function (name) {
+      zone.addEventListener(name, function (e) {
+        e.preventDefault();
+        zone.classList.remove("is-over");
+      });
+    });
+    zone.addEventListener("drop", function (e) {
+      var picked = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      if (picked) onFile(picked);
+    });
+    zone.addEventListener("click", function (e) {
+      if (e.target === file) return;
+      file.click();
+    });
+    if (reset) reset.addEventListener("click", function () {
+      show(cfg.fallback || "");
+      if (status) status.textContent = "Vissza\u00e1ll\u00edtva az eredeti plak\u00e1tra.";
+    });
+    if (clear) clear.addEventListener("click", function () {
+      show("");
+      if (status) status.textContent = "Nincs k\u00e9p. A box k\u00e9p n\u00e9lk\u00fcl jelenik meg, am\u00edg nem t\u00f6ltesz fel \u00fajat.";
+    });
+    return { show: show };
   }
 
   loginForm.addEventListener("submit", function (e) {
@@ -611,46 +1057,79 @@
     loginForm.reset();
   });
 
+  eventForm.addEventListener("submit", function (e) { e.preventDefault(); });
   eventForm.date.addEventListener("change", function () { whenTouched = false; syncWhen(); });
   eventForm.time.addEventListener("change", function () { whenTouched = false; syncWhen(); });
   eventForm.when.addEventListener("input", function () { whenTouched = true; updateLive(); });
   eventForm.title.addEventListener("input", updateLive);
   eventForm.titleEm.addEventListener("input", updateLive);
 
-  $("#poster-pick").addEventListener("click", function () { posterFile.click(); });
-  posterFile.addEventListener("change", function () {
-    if (posterFile.files && posterFile.files[0]) onPoster(posterFile.files[0]);
-    posterFile.value = "";
+  if (prevEventForm) {
+    prevEventForm.addEventListener("submit", function (e) { e.preventDefault(); });
+    prevEventForm.date.addEventListener("change", function () { prevWhenTouched = false; syncPrevWhen(); });
+    prevEventForm.time.addEventListener("change", function () { prevWhenTouched = false; syncPrevWhen(); });
+    prevEventForm.when.addEventListener("input", function () { prevWhenTouched = true; updatePrevLive(); });
+    prevEventForm.title.addEventListener("input", updatePrevLive);
+    prevEventForm.titleEm.addEventListener("input", updatePrevLive);
+  }
+
+  nextDrop = bindDropZone({
+    zone: "#drop-zone",
+    file: "#poster-file",
+    preview: "#poster-preview",
+    copy: "#drop-copy",
+    status: "#poster-status",
+    pick: "#poster-pick",
+    reset: "#poster-reset",
+    clear: "#poster-clear",
+    live: liveImage,
+    idbKey: "next-event",
+    fallback: DEFAULT_POSTER,
+    set: function (src) { posterSrc = src; },
+    afterShow: updateLive,
+    onPicked: function (dataUrl, file) {
+      if (!eventForm.imageAlt.value) {
+        eventForm.imageAlt.value = eventForm.title.value || file.name.replace(/\.[^.]+$/, "");
+      }
+    }
   });
-  ["dragenter", "dragover"].forEach(function (name) {
-    dropZone.addEventListener(name, function (e) {
-      e.preventDefault();
-      dropZone.classList.add("is-over");
-    });
+  nextDrop2 = bindDropZone({
+    zone: "#drop-zone-2",
+    file: "#poster-file-2",
+    preview: "#poster-preview-2",
+    copy: "#drop-copy-2",
+    status: "#poster-status-2",
+    pick: "#poster-pick-2",
+    reset: "#poster-reset-2",
+    clear: "#poster-clear-2",
+    idbKey: "next-event-2",
+    fallback: DEFAULT_POSTER2,
+    set: function (src) { posterSrc2 = src; },
+    onPicked: function (dataUrl, file) {
+      if (eventForm.image2Alt && !eventForm.image2Alt.value) {
+        eventForm.image2Alt.value = eventForm.title.value || file.name.replace(/\.[^.]+$/, "");
+      }
+    }
   });
-  ["dragleave", "drop"].forEach(function (name) {
-    dropZone.addEventListener(name, function (e) {
-      e.preventDefault();
-      dropZone.classList.remove("is-over");
-    });
-  });
-  dropZone.addEventListener("drop", function (e) {
-    var file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-    if (file) onPoster(file);
-  });
-  dropZone.addEventListener("click", function (e) {
-    if (e.target === posterFile) return;
-    posterFile.click();
-  });
-  $("#poster-reset").addEventListener("click", function () {
-    posterSrc = DEFAULT_POSTER;
-    showPoster(DEFAULT_POSTER);
-    posterStatus.textContent = "Vissza\u00e1ll\u00edtva az eredeti plak\u00e1tra.";
-  });
-  $("#poster-clear").addEventListener("click", function () {
-    posterSrc = "";
-    showPoster("");
-    posterStatus.textContent = "Nincs k\u00e9p. A box k\u00e9p n\u00e9lk\u00fcl jelenik meg, am\u00edg nem t\u00f6ltesz fel \u00fajat.";
+  prevDrop = bindDropZone({
+    zone: "#prev-drop-zone",
+    file: "#prev-poster-file",
+    preview: "#prev-poster-preview",
+    copy: "#prev-drop-copy",
+    status: "#prev-poster-status",
+    pick: "#prev-poster-pick",
+    reset: "#prev-poster-reset",
+    clear: "#prev-poster-clear",
+    live: prevLiveImage,
+    idbKey: "prev-event",
+    fallback: DEFAULT_PREV_POSTER,
+    set: function (src) { prevPosterSrc = src; },
+    afterShow: updatePrevLive,
+    onPicked: function (dataUrl, file) {
+      if (!prevEventForm.imageAlt.value) {
+        prevEventForm.imageAlt.value = prevEventForm.title.value || file.name.replace(/\.[^.]+$/, "");
+      }
+    }
   });
 
   calForm.addEventListener("submit", function (e) {
@@ -698,23 +1177,27 @@
 
   saveBtn.addEventListener("click", function () {
     setStatus("Ment\u00e9s...");
-    var data = collect();
-    if (posterSrc && posterSrc.indexOf("data:") === 0) window.HJStore.putImage(posterSrc);
-    var pages = data.pages || {};
-    Object.keys(pages).forEach(function (pid) {
-      var bucket = pages[pid] || {};
-      Object.keys(bucket).forEach(function (key) {
-        var val = bucket[key];
-        if (typeof val === "string" && val.indexOf("data:") === 0) {
-          window.HJStore.putImage(val, "page-" + pid + "-" + key);
-        }
+    flushCrops(function () {
+      var data = collect();
+      if (posterSrc && posterSrc.indexOf("data:") === 0) window.HJStore.putImage(posterSrc, "next-event");
+      if (posterSrc2 && posterSrc2.indexOf("data:") === 0) window.HJStore.putImage(posterSrc2, "next-event-2");
+      if (prevPosterSrc && prevPosterSrc.indexOf("data:") === 0) window.HJStore.putImage(prevPosterSrc, "prev-event");
+      var pages = data.pages || {};
+      Object.keys(pages).forEach(function (pid) {
+        var bucket = pages[pid] || {};
+        Object.keys(bucket).forEach(function (key) {
+          var val = bucket[key];
+          if (typeof val === "string" && val.indexOf("data:") === 0) {
+            window.HJStore.putImage(val, "page-" + pid + "-" + key);
+          }
+        });
       });
-    });
-    window.HJStore.save(data, function (ok) {
-      markSaved();
-      setStatus(ok
-        ? "Elmentve. A f\u0151oldalon azonnal l\u00e1tszik ezen a g\u00e9pen."
-        : "Elmentve ezen a g\u00e9pen.", true);
+      window.HJStore.save(data, function (ok) {
+        markSaved();
+        setStatus(ok
+          ? "Elmentve. A f\u0151oldalon azonnal l\u00e1tszik ezen a g\u00e9pen."
+          : "Elmentve ezen a g\u00e9pen.", true);
+      });
     });
   });
 
@@ -740,6 +1223,7 @@
         var parsed = JSON.parse(reader.result);
         window.HJ_CONTENT = window.HJStore.merge(parsed);
         fillEvent();
+        fillPrevEvent();
         resetCalForm();
         fillPageForms();
         calVisible.checked = !window.HJ_CONTENT.settings || window.HJ_CONTENT.settings.calendarVisible !== false;
@@ -752,10 +1236,13 @@
   });
 
   $("#reset-btn").addEventListener("click", function () {
-    if (!window.confirm("Vissza\u00e1ll\u00edtod az eredeti napt\u00e1rat \u00e9s a k\u00f6vetkez\u0151 esem\u00e9nyt?")) return;
+    if (!window.confirm("Vissza\u00e1ll\u00edtod az eredeti napt\u00e1rat \u00e9s az esem\u00e9nyeket?")) return;
     window.HJ_CONTENT = window.HJStore.merge(window.HJStore.defaultContent);
     posterSrc = DEFAULT_POSTER;
+    posterSrc2 = DEFAULT_POSTER2;
+    prevPosterSrc = DEFAULT_PREV_POSTER;
     fillEvent();
+    fillPrevEvent();
     resetCalForm();
     fillPageForms();
     calVisible.checked = true;

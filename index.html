@@ -16,12 +16,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=36">
+  <link rel="stylesheet" href="css/styles.css?v=52">
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"LocalBusiness","name":"Jóga & Elsősegély Judittal","description":"Jógaórák, elsősegély-képzések és coaching Judittal.","image":"images/logo.png","url":"https://jogaelseosegelyjudittal.hu/","email":"tothj@tmmt.hu","telephone":"+36302821483","founder":{"@type":"Person","name":"Tóth Judit"},"areaServed":"Hungary"}
   </script>
 </head>
-<body class="page-home">
+<body class="page-home home-wash">
   <div class="grain" aria-hidden="true"></div>
   <a class="skip-link" href="#fooldal">Ugrás a tartalomhoz</a>
   <header class="site-header">
@@ -91,24 +91,64 @@
     </section>
 
     <section class="event" id="kovetkezo-esemeny">
-      <div class="container event__intro reveal">
-        <p class="eyebrow">Következő esemény</p>
-        <h2 data-event-title>Őszi jógaóra <em>Atkáron</em></h2>
-      </div>
-      <div class="container event__layout">
-        <figure class="event__poster reveal">
-          <img data-event-image src="images/oszi-joga.png" alt="Őszi jógaóráimra várlak szeretettel — 2026. szeptember 10., 18:00, Atkár">
-        </figure>
-        <div class="event__copy reveal">
-          <p class="lead" data-event-lead>Kedves Jógásaim!</p>
-          <p data-event-p1>Lassan itt az ősz, még ha az időjárás kegyes is hozzánk ebből a szempontból. De a napsütéses órák már rövidebbek esténként, jelezve hogy egyre inkább itt az ősz.</p>
-          <p data-event-p2>Szeretettel várlak csütörtökön 18:00-tól a jóga órámra, egy kicsit elé megyünk a depressziós, bezárkózós hangulatoknak. Olyan ászanákkal, légzőgyakorlatokkal készülök, amellyel vissza hozzuk a nyár hangulatát. A gondtalan hétköznapokat és vakációkat.</p>
-          <ul class="event__meta">
-            <li><span>Időpont</span><strong data-event-when>2026. szeptember 10. • 18:00</strong></li>
-            <li><span>Részvételi díj</span><strong data-event-price>1 000 Ft / alkalom</strong></li>
-            <li><span>Helyszín</span><strong data-event-place>Egressy Gábor Művelődési Ház és Könyvtár<br>Atkár, Fő út 46.</strong></li>
-          </ul>
-          <a class="btn btn--primary" data-event-cta href="kapcsolat.html">Jelentkezem az órára</a>
+      <div class="container event-slider has-prev" data-event-slider>
+        <button type="button" class="event-slider__arrow event-slider__arrow--prev" data-event-prev aria-label="Előző esemény">
+          <span aria-hidden="true">‹</span>
+          <small>Előző</small>
+        </button>
+        <div class="event-slider__frame">
+          <div class="event-slider__track">
+            <article class="event-slide event-slide--schedules is-active" data-event-slide="next">
+              <p class="event-slide__kicker">Következő esemény</p>
+              <h2 class="event-slide__name" data-event-title>NIA White Belt <em>órarend</em></h2>
+              <figure class="event__poster">
+                <img data-event-image src="images/nia-orarend-1.png" alt="NIA White Belt órarend — 2026. szeptember 19–21., Budapest">
+                <img data-event-image-2 src="images/nia-orarend-2.png" alt="NIA White Belt órarend — 2026. szeptember 22–24., Budapest">
+              </figure>
+              <div class="event__copy">
+                <p class="lead" data-event-lead>Kedvesek!</p>
+                <p data-event-p1>Hat napos Nia White Belt képzés Budapesten, Brezina Kingával. Az órarend a napok ritmusát mutatja: sessionök, Nia órák, térteremtés és pihenők.</p>
+                <p data-event-p2>A képzés szeptember 19-én, szombaton kezdődik, és 24-én, csütörtökön a Fehér Öv Ünneppel zárul.</p>
+                <ul class="event__meta">
+                  <li><span>Időpont</span><strong data-event-when>2026. szeptember 19–24.</strong></li>
+                  <li><span>Részvételi díj</span><strong data-event-price></strong></li>
+                  <li><span>Helyszín</span><strong data-event-place>Budapest<br>Brezina Kinga</strong></li>
+                </ul>
+                <a class="btn btn--primary" data-event-cta href="kapcsolat.html">Jelentkezem a képzésre</a>
+                <p class="event__past" data-event-past hidden>Ez az alkalom már lezajlott.</p>
+              </div>
+            </article>
+            <article class="event-slide event-slide--photo" data-event-slide="prev">
+              <p class="event-slide__kicker">Előző esemény</p>
+              <h2 class="event-slide__name" data-event-title>Őszi jógaóra <em>Atkáron</em></h2>
+              <figure class="event__poster">
+                <img data-event-image src="images/oszi-joga.png" alt="Őszi jógaóráimra várlak szeretettel — 2026. szeptember 10., 18:00, Atkár">
+              </figure>
+              <div class="event__copy">
+                <p class="lead" data-event-lead>Kedves Jógásaim!</p>
+                <p data-event-p1>Lassan itt az ősz, még ha az időjárás kegyes is hozzánk ebből a szempontból. De a napsütéses órák már rövidebbek esténként, jelezve hogy egyre inkább itt az ősz.</p>
+                <p data-event-p2>Szeretettel várlak csütörtökön 18:00-tól a jóga órámra, egy kicsit elé megyünk a depressziós, bezárkózós hangulatoknak. Olyan ászanákkal, légzőgyakorlatokkal készülök, amellyel vissza hozzuk a nyár hangulatát. A gondtalan hétköznapokat és vakációkat.</p>
+                <ul class="event__meta">
+                  <li><span>Időpont</span><strong data-event-when>2026. szeptember 10. • 18:00</strong></li>
+                  <li><span>Részvételi díj</span><strong data-event-price>1 000 Ft / alkalom</strong></li>
+                  <li><span>Helyszín</span><strong data-event-place>Egressy Gábor Művelődési Ház és Könyvtár<br>Atkár, Fő út 46.</strong></li>
+                </ul>
+                <a class="btn btn--primary" data-event-cta href="kapcsolat.html" hidden>Jelentkezem az órára</a>
+                <p class="event__past" data-event-past>Ez az alkalom már lezajlott.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+        <button type="button" class="event-slider__arrow event-slider__arrow--next" data-event-next aria-label="Következő esemény" disabled>
+          <span aria-hidden="true">›</span>
+          <small>Következő</small>
+        </button>
+        <div class="event-slider__switch">
+          <p class="event-slider__hint">Váltás az események között</p>
+          <div class="event-slider__dots" role="tablist" aria-label="Események">
+            <button type="button" class="event-slider__dot" data-event-goto="prev" aria-selected="false">Előző esemény</button>
+            <button type="button" class="event-slider__dot is-active" data-event-goto="next" aria-selected="true">Következő esemény</button>
+          </div>
         </div>
       </div>
     </section>
@@ -143,11 +183,11 @@
             <p class="eyebrow" data-cal-panel-label>A hónap időpontjai</p>
             <div data-cal-list>
               <article class="cal-item cal-item--joga">
-                <p class="cal-item__when">10. · 18:00</p>
+                <p class="cal-item__when">19. · 09:45</p>
                 <p class="cal-item__type">Jóga</p>
-                <h4>Őszi jógaóra</h4>
-                <p class="cal-item__place">Egressy Gábor Művelődési Ház és Könyvtár, Atkár, Fő út 46.</p>
-                <p class="cal-item__note">1 000 Ft / alkalom</p>
+                <h4>NIA White Belt</h4>
+                <p class="cal-item__place">Budapest · Brezina Kinga</p>
+                <p class="cal-item__note">2026. szeptember 19–24.</p>
                 <a class="btn btn--ghost" href="kapcsolat.html">Jelentkezem</a>
               </article>
             </div>
@@ -239,8 +279,8 @@
     </div>
   </footer>
   <script src="js/page-defaults.js?v=4"></script>
-  <script src="js/content-store.js?v=6"></script>
+  <script src="js/content-store.js?v=10"></script>
   <script src="js/calendar.js?v=15"></script>
-  <script src="js/main.js?v=14"></script>
+  <script src="js/main.js?v=17"></script>
 </body>
 </html>

@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,500&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/admin.css?v=10">
+  <link rel="stylesheet" href="css/admin.css?v=12">
   <script>
     (function () {
       try {
@@ -27,7 +27,7 @@
   <div id="login-view" class="login-wrap">
     <section class="glass login-card">
       <h1>Belépés</h1>
-      <p class="hint">A naptár, a következő esemény és a kép szerkesztéséhez.</p>
+      <p class="hint">A naptár, a következő és az előző esemény, meg a képek szerkesztéséhez.</p>
       <form id="login-form">
         <label>Felhasználónév
           <input name="user" autocomplete="username" required>
@@ -70,6 +70,7 @@
         <p class="eyebrow">Menü</p>
         <p class="admin-nav__label">Tartalom</p>
         <button type="button" class="admin-nav__btn is-on" data-view="event">Következő esemény</button>
+        <button type="button" class="admin-nav__btn" data-view="prev">Előző esemény</button>
         <button type="button" class="admin-nav__btn" data-view="calendar">Naptár</button>
         <p class="admin-nav__label">Oldalak</p>
         <button type="button" class="admin-nav__btn" data-view="page-home">Főoldal</button>
@@ -90,20 +91,43 @@
             <form id="event-form" autocomplete="off">
               <label class="check"><input type="checkbox" name="visible"> Látszik a főoldalon</label>
 
-              <div class="drop" id="drop-zone">
-                <img id="poster-preview" alt="Előnézet" hidden>
-                <div class="drop__copy" id="drop-copy">
-                  <strong>Kép feltöltése</strong>
-                  <span>Húzd ide a plakátot, vagy kattints a választáshoz.</span>
+              <p class="hint">Ha két órarend van, töltsd fel mindkettőt. Az első felül, a második alatta jelenik meg a főoldalon.</p>
+              <div class="drop-pair">
+                <div>
+                  <p class="drop-label">Első plakát</p>
+                  <div class="drop" id="drop-zone">
+                    <img id="poster-preview" alt="Előnézet" hidden>
+                    <div class="drop__copy" id="drop-copy">
+                      <strong>Kép feltöltése</strong>
+                      <span>Húzd ide a plakátot, vagy kattints a választáshoz.</span>
+                    </div>
+                    <input id="poster-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" aria-hidden="true" tabindex="-1">
+                  </div>
+                  <div class="panel-actions drop-actions">
+                    <button class="btn btn--ghost btn--tiny" type="button" id="poster-pick">Kép kiválasztása</button>
+                    <button class="btn btn--ghost btn--tiny" type="button" id="poster-reset">Eredeti plakát</button>
+                    <button class="btn btn--danger btn--tiny" type="button" id="poster-clear">Kép törlése</button>
+                  </div>
+                  <p class="hint" id="poster-status"></p>
                 </div>
-                <input id="poster-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" aria-hidden="true" tabindex="-1">
+                <div>
+                  <p class="drop-label">Második plakát</p>
+                  <div class="drop" id="drop-zone-2">
+                    <img id="poster-preview-2" alt="Második előnézet" hidden>
+                    <div class="drop__copy" id="drop-copy-2">
+                      <strong>Második kép</strong>
+                      <span>Opcionális. Húzd ide, vagy kattints a választáshoz.</span>
+                    </div>
+                    <input id="poster-file-2" type="file" accept="image/jpeg,image/png,image/webp,image/gif" aria-hidden="true" tabindex="-1">
+                  </div>
+                  <div class="panel-actions drop-actions">
+                    <button class="btn btn--ghost btn--tiny" type="button" id="poster-pick-2">Kép kiválasztása</button>
+                    <button class="btn btn--ghost btn--tiny" type="button" id="poster-reset-2">Eredeti második</button>
+                    <button class="btn btn--danger btn--tiny" type="button" id="poster-clear-2">Kép törlése</button>
+                  </div>
+                  <p class="hint" id="poster-status-2"></p>
+                </div>
               </div>
-              <div class="panel-actions drop-actions">
-                <button class="btn btn--ghost btn--tiny" type="button" id="poster-pick">Kép kiválasztása</button>
-                <button class="btn btn--ghost btn--tiny" type="button" id="poster-reset">Eredeti plakát</button>
-                <button class="btn btn--danger btn--tiny" type="button" id="poster-clear">Kép törlése</button>
-              </div>
-              <p class="hint" id="poster-status"></p>
 
               <div class="event-grid">
                 <label>Cím
@@ -139,8 +163,11 @@
                 <label class="wide">Második bekezdés
                   <textarea name="p2"></textarea>
                 </label>
-                <label class="wide">Kép leírása
+                <label class="wide">Első kép leírása
                   <input name="imageAlt">
+                </label>
+                <label class="wide">Második kép leírása
+                  <input name="image2Alt">
                 </label>
                 <label class="wide">Gomb linkje
                   <select name="ctaHref">
@@ -157,6 +184,85 @@
               <img id="live-image" alt="">
               <h3 id="live-title"></h3>
               <p id="live-when"></p>
+            </div>
+          </section>
+        </div>
+
+
+        <div class="admin-view" id="view-prev" hidden>
+          <section class="glass pad">
+            <h2>Előző esemény</h2>
+            <p class="hint">Ez jelenik meg, ha a főoldalon az Előző eseményre váltanak. Ha a gomb szövege üres, az alkalom már lezajlott felirat látszik.</p>
+            <form id="prev-event-form" autocomplete="off">
+              <label class="check"><input type="checkbox" name="visible"> Látszik a főoldalon</label>
+
+              <div class="drop" id="prev-drop-zone">
+                <img id="prev-poster-preview" alt="Előnézet" hidden>
+                <div class="drop__copy" id="prev-drop-copy">
+                  <strong>Kép feltöltése</strong>
+                  <span>Húzd ide a plakátot, vagy kattints a választáshoz.</span>
+                </div>
+                <input id="prev-poster-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" aria-hidden="true" tabindex="-1">
+              </div>
+              <div class="panel-actions drop-actions">
+                <button class="btn btn--ghost btn--tiny" type="button" id="prev-poster-pick">Kép kiválasztása</button>
+                <button class="btn btn--ghost btn--tiny" type="button" id="prev-poster-reset">Eredeti plakát</button>
+                <button class="btn btn--danger btn--tiny" type="button" id="prev-poster-clear">Kép törlése</button>
+              </div>
+              <p class="hint" id="prev-poster-status"></p>
+
+              <div class="event-grid">
+                <label>Cím
+                  <input name="title">
+                </label>
+                <label>Kiemelt szó
+                  <input name="titleEm" placeholder="pl. Atkáron">
+                </label>
+                <label>Dátum
+                  <input name="date" type="date">
+                </label>
+                <label>Óra
+                  <input name="time" type="time">
+                </label>
+                <label class="wide">Megjelenő időpont
+                  <input name="when">
+                </label>
+                <label>Díj
+                  <input name="price">
+                </label>
+                <label>Gomb
+                  <input name="cta" placeholder="Üresen: már lezajlott">
+                </label>
+                <label class="wide">Helyszín
+                  <textarea name="place" rows="3"></textarea>
+                </label>
+                <label class="wide">Köszöntés
+                  <input name="lead">
+                </label>
+                <label class="wide">Első bekezdés
+                  <textarea name="p1"></textarea>
+                </label>
+                <label class="wide">Második bekezdés
+                  <textarea name="p2"></textarea>
+                </label>
+                <label class="wide">Kép leírása
+                  <input name="imageAlt">
+                </label>
+                <label class="wide">Gomb linkje
+                  <select name="ctaHref">
+                    <option value="kapcsolat.html">Kapcsolat</option>
+                    <option value="joga.html">Jóga oldal</option>
+                    <option value="elseosegely.html">Elsősegély oldal</option>
+                    <option value="coaching.html">Coaching oldal</option>
+                  </select>
+                </label>
+              </div>
+            </form>
+            <div class="live" id="prev-live-preview">
+              <p class="eyebrow">Előnézet</p>
+              <img id="prev-live-image" alt="">
+              <h3 id="prev-live-title"></h3>
+              <p id="prev-live-when"></p>
             </div>
           </section>
         </div>
@@ -311,8 +417,8 @@
   <footer class="admin-credit">Admin panel v1.0 készítette: Nithlak (Viczán Gábor)</footer>
 
   <script src="js/page-defaults.js?v=4"></script>
-  <script src="js/content-store.js?v=6"></script>
-  <script src="js/page-schema.js?v=3"></script>
-  <script src="js/admin.js?v=7"></script>
+  <script src="js/content-store.js?v=10"></script>
+  <script src="js/page-schema.js?v=4"></script>
+  <script src="js/admin.js?v=10"></script>
 </body>
 </html>

@@ -57,11 +57,11 @@
   window.addEventListener("scroll", onScroll, { passive: true });
 
   var revealBlocks =
-    ".subtype, .aid-course, .social-card, .contact-box, .event__poster, .cal, " +
+    ".subtype, .aid-course, .social-card, .contact-box, .event-slider, .cal, " +
     ".editorial__visual, .about__photo-wrap, main form, .contact-shell";
   var revealCopy =
     "main h1, main h2, main h3, main .eyebrow, main .lead, main p, " +
-    ".event__intro, .event__copy, .calendar-intro, .social-intro, " +
+    ".event-slide, .calendar-intro, .social-intro, " +
     ".about__copy, .editorial__copy, .contact-details";
 
   document.querySelectorAll(revealBlocks).forEach(function (el) {
@@ -210,4 +210,62 @@
       });
     });
   }
+
+  (function initEventSlider() {
+    var root = document.querySelector("[data-event-slider]");
+    if (!root) return;
+    var frame = root.querySelector(".event-slider__frame");
+    var startX = 0;
+
+    function show(which, fromUser) {
+      var toPrev = which === "prev";
+      if (toPrev && !root.classList.contains("has-prev")) toPrev = false;
+      root.classList.toggle("is-prev", toPrev);
+      if (fromUser) {
+        var box = root.closest(".event") || root;
+        box.scrollIntoView({ block: "start", behavior: reduceMotion ? "auto" : "smooth" });
+      }
+      root.querySelectorAll("[data-event-slide]").forEach(function (slide) {
+        slide.classList.toggle("is-active", slide.getAttribute("data-event-slide") === (toPrev ? "prev" : "next"));
+      });
+      var prevBtn = root.querySelector("[data-event-prev]");
+      var nextBtn = root.querySelector("[data-event-next]");
+      if (prevBtn) prevBtn.disabled = toPrev;
+      if (nextBtn) nextBtn.disabled = !toPrev;
+      root.querySelectorAll("[data-event-goto]").forEach(function (dot) {
+        var on = dot.getAttribute("data-event-goto") === (toPrev ? "prev" : "next");
+        dot.classList.toggle("is-active", on);
+        dot.setAttribute("aria-selected", on ? "true" : "false");
+      });
+    }
+
+    root.addEventListener("click", function (e) {
+      var prev = e.target.closest("[data-event-prev]");
+      var next = e.target.closest("[data-event-next]");
+      var dot = e.target.closest("[data-event-goto]");
+      if (prev && !prev.disabled) show("prev", true);
+      if (next && !next.disabled) show("next", true);
+      if (dot) show(dot.getAttribute("data-event-goto"), true);
+    });
+
+    if (frame) {
+      frame.addEventListener("pointerdown", function (e) {
+        startX = e.clientX;
+      });
+      frame.addEventListener("pointerup", function (e) {
+        var dx = e.clientX - startX;
+        if (Math.abs(dx) < 50) return;
+        if (dx < 0) show("prev", true);
+        else show("next", true);
+      });
+    }
+
+    document.addEventListener("keydown", function (e) {
+      if (!root.contains(document.activeElement) && !root.matches(":hover")) return;
+      if (e.key === "ArrowLeft") show("prev", true);
+      if (e.key === "ArrowRight") show("next", true);
+    });
+
+    show("next");
+  })();
 })();

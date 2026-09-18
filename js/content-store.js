@@ -16,10 +16,29 @@
     },
     nextEvent: {
       visible: true,
+      title: "NIA White Belt",
+      titleEm: "\u00f3rarend",
+      image: "images/nia-orarend-1.png",
+      image2: "images/nia-orarend-2.png",
+      imageAlt: "NIA White Belt \u00f3rarend \u2014 2026. szeptember 19\u201321., Budapest",
+      image2Alt: "NIA White Belt \u00f3rarend \u2014 2026. szeptember 22\u201324., Budapest",
+      date: "2026-09-19",
+      time: "09:45",
+      lead: "Kedvesek!",
+      p1: "Hat napos Nia White Belt k\u00e9pz\u00e9s Budapesten, Brezina King\u00e1val. Az \u00f3rarend a napok ritmus\u00e1t mutatja: session\u00f6k, Nia \u00f3r\u00e1k, t\u00e9rteremt\u00e9s \u00e9s pihen\u0151k.",
+      p2: "A k\u00e9pz\u00e9s szeptember 19-\u00e9n, szombaton kezd\u0151dik, \u00e9s 24-\u00e9n, cs\u00fct\u00f6rt\u00f6k\u00f6n a Feh\u00e9r \u00d6v \u00dcnneppel z\u00e1rul.",
+      when: "2026. szeptember 19\u201324.",
+      price: "",
+      place: "Budapest\nBrezina Kinga",
+      cta: "Jelentkezem a k\u00e9pz\u00e9sre",
+      ctaHref: "kapcsolat.html"
+    },
+    prevEvent: {
+      visible: true,
       title: "\u0150szi j\u00f3ga\u00f3ra",
       titleEm: "Atk\u00e1ron",
       image: "images/oszi-joga.png",
-      imageAlt: "\u0150szi j\u00f3ga\u00f3r\u00e1imra v\u00e1rlak szeretettel",
+      imageAlt: "\u0150szi j\u00f3ga\u00f3r\u00e1imra v\u00e1rlak szeretettel \u2014 2026. szeptember 10., 18:00, Atk\u00e1r",
       date: "2026-09-10",
       time: "18:00",
       lead: "Kedves J\u00f3g\u00e1saim!",
@@ -28,18 +47,18 @@
       when: "2026. szeptember 10. \u2022 18:00",
       price: "1 000 Ft / alkalom",
       place: "Egressy G\u00e1bor M\u0171vel\u0151d\u00e9si H\u00e1z \u00e9s K\u00f6nyvt\u00e1r\nAtk\u00e1r, F\u0151 \u00fat 46.",
-      cta: "Jelentkezem az \u00f3r\u00e1ra",
+      cta: "",
       ctaHref: "kapcsolat.html"
     },
     events: [
       {
-        id: "ev-2026-09-10",
-        date: "2026-09-10",
-        time: "18:00",
+        id: "ev-2026-09-19",
+        date: "2026-09-19",
+        time: "09:45",
         type: "joga",
-        title: "\u0150szi j\u00f3ga\u00f3ra",
-        place: "Egressy G\u00e1bor M\u0171vel\u0151d\u00e9si H\u00e1z \u00e9s K\u00f6nyvt\u00e1r, Atk\u00e1r, F\u0151 \u00fat 46.",
-        note: "1 000 Ft / alkalom",
+        title: "NIA White Belt",
+        place: "Budapest \u00b7 Brezina Kinga",
+        note: "2026. szeptember 19\u201324.",
         href: "kapcsolat.html"
       }
     ]
@@ -51,6 +70,13 @@
     return JSON.parse(JSON.stringify(data));
   }
 
+  function isPastPoster(ev) {
+    if (!ev || typeof ev !== "object") return false;
+    var img = String(ev.image || "");
+    var t = String(ev.title || "");
+    return img.indexOf("oszi-joga") !== -1 || /szi j[o\u00f3]ga/i.test(t);
+  }
+
   function merge(extra) {
     var out = clone(DEFAULT_CONTENT);
     if (!extra || typeof extra !== "object") return out;
@@ -58,9 +84,19 @@
       out.settings = Object.assign({}, out.settings, extra.settings);
     }
     if (extra.nextEvent && typeof extra.nextEvent === "object") {
-      out.nextEvent = Object.assign({}, out.nextEvent, extra.nextEvent);
+      if (isPastPoster(extra.nextEvent) && !extra.prevEvent) {
+        out.prevEvent = Object.assign({}, out.prevEvent, extra.nextEvent, { cta: "" });
+      } else {
+        out.nextEvent = Object.assign({}, out.nextEvent, extra.nextEvent);
+      }
     }
-    if (Array.isArray(extra.events)) out.events = extra.events.slice();
+    if (extra.prevEvent && typeof extra.prevEvent === "object") {
+      out.prevEvent = Object.assign({}, out.prevEvent, extra.prevEvent);
+    }
+    if (Array.isArray(extra.events)) {
+      var onlyPast = extra.events.length && extra.events.every(function (ev) { return isPastPoster(ev); });
+      out.events = onlyPast ? DEFAULT_CONTENT.events.slice() : extra.events.slice();
+    }
     out.pages = out.pages || {};
     if (extra.pages && typeof extra.pages === "object") {
       Object.keys(extra.pages).forEach(function (id) {
@@ -146,6 +182,12 @@
     var copy = clone(data);
     if (copy.nextEvent && copy.nextEvent.image) {
       copy.nextEvent.image = offloadDataUrl(copy.nextEvent.image, "next-event");
+    }
+    if (copy.nextEvent && copy.nextEvent.image2) {
+      copy.nextEvent.image2 = offloadDataUrl(copy.nextEvent.image2, "next-event-2");
+    }
+    if (copy.prevEvent && copy.prevEvent.image) {
+      copy.prevEvent.image = offloadDataUrl(copy.prevEvent.image, "prev-event");
     }
     var pages = copy.pages || {};
     Object.keys(pages).forEach(function (pid) {
@@ -258,16 +300,14 @@
     done(src);
   }
 
-  function renderNextEvent(data) {
-    var box = document.getElementById("kovetkezo-esemeny");
-    if (!box) return;
-    var ev = data && data.nextEvent;
+  function fillEventSlide(slide, ev) {
+    if (!slide) return;
     if (!ev || ev.visible === false) {
-      box.hidden = true;
+      slide.hidden = true;
       return;
     }
-    box.hidden = false;
-    var title = box.querySelector("[data-event-title]");
+    slide.hidden = false;
+    var title = slide.querySelector("[data-event-title]");
     if (title) {
       title.textContent = "";
       title.appendChild(document.createTextNode((ev.title || "") + (ev.titleEm ? " " : "")));
@@ -277,9 +317,10 @@
         title.appendChild(em);
       }
     }
-    var img = box.querySelector("[data-event-image]");
+    var alt = ev.imageAlt || ev.title || "";
+    var img = slide.querySelector("[data-event-image]");
     if (img) {
-      img.alt = ev.imageAlt || ev.title || "";
+      img.alt = alt;
       if (!ev.image) {
         img.removeAttribute("src");
         img.hidden = true;
@@ -288,17 +329,32 @@
         resolveImage(ev.image, function (url) { if (url) setImgSrc(img, url); });
       }
     }
-    var lead = box.querySelector("[data-event-lead]");
+    var img2 = slide.querySelector("[data-event-image-2]");
+    if (img2) {
+      img2.alt = ev.image2Alt || alt;
+      if (!ev.image2) {
+        img2.removeAttribute("src");
+        img2.hidden = true;
+      } else {
+        img2.hidden = false;
+        resolveImage(ev.image2, function (url) { if (url) setImgSrc(img2, url); });
+      }
+    }
+    var lead = slide.querySelector("[data-event-lead]");
     if (lead) lead.textContent = ev.lead || "";
-    var p1 = box.querySelector("[data-event-p1]");
+    var p1 = slide.querySelector("[data-event-p1]");
     if (p1) p1.textContent = ev.p1 || "";
-    var p2 = box.querySelector("[data-event-p2]");
+    var p2 = slide.querySelector("[data-event-p2]");
     if (p2) p2.textContent = ev.p2 || "";
-    var when = box.querySelector("[data-event-when]");
+    var when = slide.querySelector("[data-event-when]");
     if (when) when.textContent = ev.when || "";
-    var price = box.querySelector("[data-event-price]");
-    if (price) price.textContent = ev.price || "";
-    var place = box.querySelector("[data-event-place]");
+    var price = slide.querySelector("[data-event-price]");
+    if (price) {
+      price.textContent = ev.price || "";
+      var priceRow = price.closest("li");
+      if (priceRow) priceRow.hidden = !ev.price;
+    }
+    var place = slide.querySelector("[data-event-place]");
     if (place) {
       place.textContent = "";
       String(ev.place || "").split("\n").forEach(function (line, i) {
@@ -306,11 +362,32 @@
         place.appendChild(document.createTextNode(line));
       });
     }
-    var cta = box.querySelector("[data-event-cta]");
+    var cta = slide.querySelector("[data-event-cta]");
+    var past = slide.querySelector("[data-event-past]");
+    var hasCta = !!(ev.cta && String(ev.cta).trim());
     if (cta) {
-      cta.textContent = ev.cta || "Jelentkezem";
-      cta.href = ev.ctaHref || "kapcsolat.html";
+      cta.hidden = !hasCta;
+      if (hasCta) {
+        cta.textContent = ev.cta;
+        cta.href = ev.ctaHref || "kapcsolat.html";
+      }
     }
+    if (past) past.hidden = hasCta;
+  }
+
+  function renderNextEvent(data) {
+    var box = document.getElementById("kovetkezo-esemeny");
+    if (!box) return;
+    var nextEv = data && data.nextEvent;
+    var prevEv = data && data.prevEvent;
+    var nextSlide = box.querySelector('[data-event-slide="next"]');
+    var prevSlide = box.querySelector('[data-event-slide="prev"]');
+    fillEventSlide(nextSlide, nextEv);
+    fillEventSlide(prevSlide, prevEv);
+    var showBox = (nextEv && nextEv.visible !== false) || (prevEv && prevEv.visible !== false);
+    box.hidden = !showBox;
+    var slider = box.querySelector("[data-event-slider]");
+    if (slider) slider.classList.toggle("has-prev", !!(prevEv && prevEv.visible !== false));
   }
 
   function renderCalendarVisibility(data) {
