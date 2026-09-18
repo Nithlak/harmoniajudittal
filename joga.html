@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=34">
+  <link rel="stylesheet" href="css/styles.css?v=35">
 </head>
 <body class="page-joga">
   <div class="grain" aria-hidden="true"></div>
@@ -46,31 +46,31 @@
             <img src="images/joga-judit.jpg" alt="Tóth Judit a jógastúdióban">
           </figure>
           <aside class="float-card editorial__card">
-            <small>Jóga</small>
-            <strong>A testedhez igazítva</strong>
+            <small data-copy="joga.floatSmall">Jóga</small>
+            <strong data-copy="joga.floatStrong">A testedhez igazítva</strong>
           </aside>
         </div>
         <div class="editorial__copy">
           <div class="joga-copy-shell">
-            <p class="eyebrow">Jóga</p>
-            <h1>Mozgás, ami <em>a testedhez igazodik</em></h1>
-            <p class="lead">Minden órán a biztonság, a légzés és a jelenlét áll a középpontban. Nem teljesítményre, hanem tartós jóllétre dolgozunk.</p>
+            <p class="eyebrow" data-copy="joga.eyebrow">Jóga</p>
+            <h1 data-copy="joga.h1" data-copy-em="h1Em">Mozgás, ami <em>a testedhez igazodik</em></h1>
+            <p class="lead" data-copy="joga.lead">Minden órán a biztonság, a légzés és a jelenlét áll a középpontban. Nem teljesítményre, hanem tartós jóllétre dolgozunk.</p>
             <div class="subtype-stack">
               <article class="subtype subtype--teal" id="kismama-joga">
-                <h2>Kismama jóga</h2>
-                <p>Biztonságos, kíméletes mozgás a várandósság alatt. A gyakorlatok a test változásaira hangolódnak, támogatják a tartást, a légzést és a szülésre való felkészülést.</p>
+                <h2 data-copy="joga.kismamaTitle">Kismama jóga</h2>
+                <p data-copy="joga.kismamaText">Biztonságos, kíméletes mozgás a várandósság alatt. A gyakorlatok a test változásaira hangolódnak, támogatják a tartást, a légzést és a szülésre való felkészülést.</p>
               </article>
               <article class="subtype subtype--purple" id="baba-mama-joga">
-                <h2>Baba-mama jóga</h2>
-                <p>Közös, játékos gyakorlatok, amelyek erősítik a kötődést, oldják a szülés utáni feszültségeket, és fokozatosan visszaadják az anyai test rugalmasságát.</p>
+                <h2 data-copy="joga.babaTitle">Baba-mama jóga</h2>
+                <p data-copy="joga.babaText">Közös, játékos gyakorlatok, amelyek erősítik a kötődést, oldják a szülés utáni feszültségeket, és fokozatosan visszaadják az anyai test rugalmasságát.</p>
               </article>
               <article class="subtype subtype--teal" id="senior-joga">
-                <h2>Senior jóga</h2>
-                <p>Lágy, ízületkímélő órák az egyensúly, a mobilitás és a mindennapi könnyedség megőrzéséhez. Figyelmes tempó, stabil támasz, barátságos közösség.</p>
+                <h2 data-copy="joga.seniorTitle">Senior jóga</h2>
+                <p data-copy="joga.seniorText">Lágy, ízületkímélő órák az egyensúly, a mobilitás és a mindennapi könnyedség megőrzéséhez. Figyelmes tempó, stabil támasz, barátságos közösség.</p>
               </article>
               <article class="subtype subtype--purple" id="hatha-joga">
-                <h2>Hatha jóga</h2>
-                <p>Klasszikus aszanák, tudatos légzés és belső nyugalom. Erőt, rugalmasságot és kiegyensúlyozottabb hétköznapokat hoz kezdőknek és gyakorlóknak egyaránt.</p>
+                <h2 data-copy="joga.hathaTitle">Hatha jóga</h2>
+                <p data-copy="joga.hathaText">Klasszikus aszanák, tudatos légzés és belső nyugalom. Erőt, rugalmasságot és kiegyensúlyozottabb hétköznapokat hoz kezdőknek és gyakorlóknak egyaránt.</p>
               </article>
             </div>
           </div>
@@ -100,13 +100,15 @@
       <div class="footer-nav">
         <span>Kapcsolat</span>
         <a href="mailto:tothj@tmmt.hu">tothj@tmmt.hu</a>
-        <a href="tel:+36702333259">+36 70 233 3259</a>
+        <a href="tel:+36302821483">+36302821483</a>
       </div>
     </div>
     <div class="container">
-      <p class="footer-copy">&copy; <span id="year"></span> Jóga &amp; Elsősegély Judittal. Minden jog fenntartva.</p>
+      <p class="footer-copy"><span>&copy; <span id="year"></span> Jóga &amp; Elsősegély Judittal. Minden jog fenntartva.</span> <a class="footer-login" href="admin.html">Belépés</a></p>
     </div>
   </footer>
+  <script src="js/page-defaults.js?v=3"></script>
+  <script src="js/content-store.js?v=5"></script>
   <script src="js/main.js?v=14"></script>
 </body>
 </html>

@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=33">
+  <link rel="stylesheet" href="css/styles.css?v=35">
 </head>
 <body class="page-about">
   <div class="grain" aria-hidden="true"></div>
@@ -51,15 +51,15 @@
           <figure class="mask-circle about__chip">
             <img src="images/connect.jpg" alt="Kapcsolódás és figyelem">
           </figure>
-          <p class="about__note">A bemutatkozó portré helye</p>
+          <p class="about__note" data-copy="about.note">A bemutatkozó portré helye</p>
         </div>
         <div class="reveal about__copy">
-          <p class="eyebrow">Bemutatkozás</p>
-          <h1>Tóth Judit</h1>
-          <p class="lead"></p>
-          <p></p>
-          <p></p>
-          <p></p>
+          <p class="eyebrow" data-copy="about.eyebrow">Bemutatkozás</p>
+          <h1 data-copy="about.name">Tóth Judit</h1>
+          <p class="lead" data-copy="about.lead"></p>
+          <p data-copy="about.p1"></p>
+          <p data-copy="about.p2"></p>
+          <p data-copy="about.p3"></p>
         </div>
       </div>
     </section>
@@ -86,13 +86,15 @@
       <div class="footer-nav">
         <span>Kapcsolat</span>
         <a href="mailto:tothj@tmmt.hu">tothj@tmmt.hu</a>
-        <a href="tel:+36702333259">+36 70 233 3259</a>
+        <a href="tel:+36302821483">+36302821483</a>
       </div>
     </div>
     <div class="container">
-      <p class="footer-copy">&copy; <span id="year"></span> Jóga &amp; Elsősegély Judittal. Minden jog fenntartva.</p>
+      <p class="footer-copy"><span>&copy; <span id="year"></span> Jóga &amp; Elsősegély Judittal. Minden jog fenntartva.</span> <a class="footer-login" href="admin.html">Belépés</a></p>
     </div>
   </footer>
+  <script src="js/page-defaults.js?v=3"></script>
+  <script src="js/content-store.js?v=5"></script>
   <script src="js/main.js?v=14"></script>
 </body>
 </html>

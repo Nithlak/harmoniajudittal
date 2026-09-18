@@ -4,19 +4,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Kapcsolat | Tóth Judit</title>
-  <meta name="description" content="Foglalj időpontot Tóth Juditnál: tothj@tmmt.hu, +36 70 233 3259.">
+  <meta name="description" content="Foglalj időpontot Tóth Juditnál: tothj@tmmt.hu, +36302821483.">
   <meta name="theme-color" content="#FFFCF8">
   <link rel="canonical" href="https://jogaelseosegelyjudittal.hu/kapcsolat.html">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="hu_HU">
   <meta property="og:title" content="Kapcsolat | Tóth Judit">
-  <meta property="og:description" content="Foglalj időpontot Tóth Juditnál: tothj@tmmt.hu, +36 70 233 3259.">
+  <meta property="og:description" content="Foglalj időpontot Tóth Juditnál: tothj@tmmt.hu, +36302821483.">
   <meta property="og:image" content="images/logo.png">
   <link rel="icon" href="images/logo.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=33">
+  <link rel="stylesheet" href="css/styles.css?v=35">
 </head>
 <body class="page-contact">
   <div class="grain" aria-hidden="true"></div>
@@ -42,9 +42,9 @@
     <section class="section section--cream page-top">
       <div class="container contact-page">
         <header class="contact-page__intro reveal">
-          <p class="eyebrow">Kapcsolat</p>
-          <h1>Foglalj időpontot, <em>vagy írj nyugodtan</em></h1>
-          <p class="lead">Óra, képzés vagy coaching? Írj egy rövid üzenetet, és hamarosan jelentkezem.</p>
+          <p class="eyebrow" data-copy="contact.eyebrow">Kapcsolat</p>
+          <h1 data-copy="contact.h1" data-copy-em="h1Em">Foglalj időpontot, <em>vagy írj nyugodtan</em></h1>
+          <p class="lead" data-copy="contact.lead">Óra, képzés vagy coaching? Írj egy rövid üzenetet, és hamarosan jelentkezem.</p>
         </header>
 
         <div class="contact-shell">
@@ -57,32 +57,32 @@
 
             <div class="contact-form__grid">
               <div class="field">
-                <label for="name">Név <abbr title="kötelező">*</abbr></label>
-                <input id="name" name="name" type="text" autocomplete="name" required maxlength="80" placeholder="Teljes név">
+                <label for="name"><span data-copy="contact.labelName">Név</span> <abbr title="kötelező">*</abbr></label>
+                <input id="name" name="name" type="text" autocomplete="name" required maxlength="80" placeholder="Teljes név" data-copy="contact.placeholderName" data-copy-attr="placeholder">
               </div>
               <div class="field">
-                <label for="email">E-mail <abbr title="kötelező">*</abbr></label>
-                <input id="email" name="email" type="email" autocomplete="email" required maxlength="120" placeholder="pelda@email.hu">
+                <label for="email"><span data-copy="contact.labelEmail">E-mail</span> <abbr title="kötelező">*</abbr></label>
+                <input id="email" name="email" type="email" autocomplete="email" required maxlength="120" placeholder="pelda@email.hu" data-copy="contact.placeholderEmail" data-copy-attr="placeholder">
               </div>
               <div class="field">
-                <label for="topic">Téma <abbr title="kötelező">*</abbr></label>
+                <label for="topic"><span data-copy="contact.labelTopic">Téma</span> <abbr title="kötelező">*</abbr></label>
                 <select id="topic" name="topic" required>
-                  <option value="">Válassz szolgáltatást</option>
-                  <option value="Jóga">Jóga</option>
-                  <option value="Elsősegélynyújtás">Elsősegélynyújtás</option>
-                  <option value="Coaching">Coaching</option>
-                  <option value="Egyéb kérdés">Egyéb kérdés</option>
+                  <option value="" data-copy="contact.topicDefault">Válassz szolgáltatást</option>
+                  <option value="Jóga" data-copy="contact.topicJoga">Jóga</option>
+                  <option value="Elsősegélynyújtás" data-copy="contact.topicAid">Elsősegélynyújtás</option>
+                  <option value="Coaching" data-copy="contact.topicCoach">Coaching</option>
+                  <option value="Egyéb kérdés" data-copy="contact.topicOther">Egyéb kérdés</option>
                 </select>
               </div>
               <div class="field">
-                <label for="phone">Telefon <span class="field__optional">opcionális</span></label>
-                <input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="24" placeholder="+36 …">
+                <label for="phone"><span data-copy="contact.labelPhone">Telefon</span> <span class="field__optional" data-copy="contact.phoneOptional">opcionális</span></label>
+                <input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="24" placeholder="+36 …" data-copy="contact.placeholderPhone" data-copy-attr="placeholder">
               </div>
             </div>
 
             <div class="field">
-              <label for="message">Üzenet <abbr title="kötelező">*</abbr></label>
-              <textarea id="message" name="message" required minlength="10" maxlength="2000" placeholder="Mikor jó, mire szeretnél időpontot, és van-e bármi, amire figyeljek?"></textarea>
+              <label for="message"><span data-copy="contact.labelMessage">Üzenet</span> <abbr title="kötelező">*</abbr></label>
+              <textarea id="message" name="message" required minlength="10" maxlength="2000" placeholder="Mikor jó, mire szeretnél időpontot, és van-e bármi, amire figyeljek?" data-copy="contact.placeholderMessage" data-copy-attr="placeholder"></textarea>
             </div>
 
             <div class="field field--check">
@@ -92,34 +92,34 @@
 
             <label class="consent">
               <input id="consent" name="consent" type="checkbox" value="Elfogadva" required>
-              <span>Elfogadom, hogy a megadott adatokat csak a válaszadáshoz használjuk.</span>
+              <span data-copy="contact.consent">Elfogadom, hogy a megadott adatokat csak a válaszadáshoz használjuk.</span>
             </label>
 
             <div class="contact-form__actions">
-              <button class="btn btn--primary" type="submit">Üzenet küldése</button>
-              <p class="contact-form__hint">A csillaggal jelölt mezők kötelezők.</p>
+              <button class="btn btn--primary" type="submit" data-copy="contact.btn">Üzenet küldése</button>
+              <p class="contact-form__hint" data-copy="contact.hint">A csillaggal jelölt mezők kötelezők.</p>
             </div>
             <p class="form-status" id="form-status" hidden></p>
           </form>
 
           <aside class="contact-card" aria-label="Elérhetőség">
-            <p class="contact-card__kicker">Elérhetőség</p>
-            <a class="contact-card__row" href="mailto:tothj@tmmt.hu">
+            <p class="contact-card__kicker" data-copy="contact.cardKicker">Elérhetőség</p>
+            <a class="contact-card__row" href="mailto:tothj@tmmt.hu" data-copy="contact.emailValue" data-copy-attr="href" data-copy-prefix="mailto:">
               <span class="contact-card__icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none"><rect x="3.5" y="5.5" width="17" height="13" rx="2.2" stroke="currentColor" stroke-width="1.6"/><path d="M4.2 7.2 12 12.4l7.8-5.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </span>
               <span>
-                <small>E-mail</small>
-                <strong>tothj@tmmt.hu</strong>
+                <small data-copy="contact.emailLabel">E-mail</small>
+                <strong data-copy="contact.emailValue">tothj@tmmt.hu</strong>
               </span>
             </a>
-            <a class="contact-card__row" href="tel:+36702333259">
+            <a class="contact-card__row" href="tel:+36302821483" data-copy="contact.phoneValue" data-copy-attr="href" data-copy-prefix="tel:">
               <span class="contact-card__icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none"><path d="M7.4 3.8h3.1l1.1 3.2-1.9 1.2a12.6 12.6 0 0 0 6.1 6.1l1.2-1.9 3.2 1.1v3.1c0 .7-.6 1.4-1.4 1.5-8.2.8-15.1-6.1-14.3-14.3.1-.8.8-1.4 1.5-1.4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
               </span>
               <span>
-                <small>Telefon</small>
-                <strong>+36 70 233 3259</strong>
+                <small data-copy="contact.phoneLabel">Telefon</small>
+                <strong data-copy="contact.phoneValue">+36302821483</strong>
               </span>
             </a>
           </aside>
@@ -149,13 +149,15 @@
       <div class="footer-nav">
         <span>Kapcsolat</span>
         <a href="mailto:tothj@tmmt.hu">tothj@tmmt.hu</a>
-        <a href="tel:+36702333259">+36 70 233 3259</a>
+        <a href="tel:+36302821483">+36302821483</a>
       </div>
     </div>
     <div class="container">
-      <p class="footer-copy">&copy; <span id="year"></span> Jóga &amp; Elsősegély Judittal. Minden jog fenntartva.</p>
+      <p class="footer-copy"><span>&copy; <span id="year"></span> Jóga &amp; Elsősegély Judittal. Minden jog fenntartva.</span> <a class="footer-login" href="admin.html">Belépés</a></p>
     </div>
   </footer>
+  <script src="js/page-defaults.js?v=3"></script>
+  <script src="js/content-store.js?v=5"></script>
   <script src="js/main.js?v=15"></script>
 </body>
 </html>

@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=33">
+  <link rel="stylesheet" href="css/styles.css?v=35">
 </head>
 <body class="page-coach">
   <div class="grain" aria-hidden="true"></div>
@@ -47,17 +47,21 @@
           </figure>
         </div>
         <div class="editorial__copy reveal">
-          <p class="eyebrow">Coaching</p>
-          <h1>Tisztább irány, <em>támogató kísérés</em></h1>
-          <p class="lead">Nem kész válaszokat adok, hanem olyan kérdéseket és keretet, amelyekkel te találod meg a saját, tartható utadat.</p>
+          <p class="eyebrow" data-copy="coach.eyebrow">Coaching</p>
+            <h1 data-copy="coach.h1" data-copy-em="h1Em">Tisztább irány, <em>támogató kísérés</em></h1>
+            <p class="lead" data-copy="coach.lead">Nem kész válaszokat adok, hanem olyan kérdéseket és keretet, amelyekkel te találod meg a saját, tartható utadat.</p>
           <div class="subtype-stack" id="felnott-coaching">
             <article class="subtype subtype--purple">
-              <h2>Felnőtt magán coaching</h2>
-              <p>Személyre szabott beszélgetések élethelyzeti váltáshoz, önbizalomhoz, kapcsolatokhoz vagy a mindennapi egyensúly visszaállításához.</p>
+              <h2 data-copy="coach.privTitle">Felnőtt magán coaching</h2>
+              <p data-copy="coach.privText">Személyre szabott beszélgetések élethelyzeti váltáshoz, önbizalomhoz, kapcsolatokhoz vagy a mindennapi egyensúly visszaállításához.</p>
             </article>
             <article class="subtype subtype--teal">
-              <h2>Üzleti coaching</h2>
-              <p>Vezetői és szakmai fókuszú folyamat: tisztább szerepek, jobb döntések, egészségesebb együttműködés és fenntartható teljesítmény.</p>
+              <h2 data-copy="coach.bizTitle">Üzleti coaching</h2>
+              <p data-copy="coach.bizText">Vezetői és szakmai fókuszú folyamat: tisztább szerepek, jobb döntések, egészségesebb együttműködés és fenntartható teljesítmény.</p>
+            </article>
+            <article class="subtype subtype--purple" id="jogaalapu-coaching">
+              <h2 data-copy="coach.yogaTitle">Jógaalapú coaching beszélgetés</h2>
+              <p data-copy="coach.yogaText">A coaching beszélgetés során a téged foglalkoztató kérdéssel dolgozunk. Az alkalom része egy körülbelül 20 perces, személyre szabott jógagyakorlat is, amely az aktuális helyzetedhez kapcsolódik. A mozgás és a légzés segíthet lelassulni, más szemszögből ránézni a problémádra, és közelebb kerülni a saját megoldásodhoz. Jógás előképzettségre nincs szükség.</p>
             </article>
           </div>
         </div>
@@ -86,13 +90,15 @@
       <div class="footer-nav">
         <span>Kapcsolat</span>
         <a href="mailto:tothj@tmmt.hu">tothj@tmmt.hu</a>
-        <a href="tel:+36702333259">+36 70 233 3259</a>
+        <a href="tel:+36302821483">+36302821483</a>
       </div>
     </div>
     <div class="container">
-      <p class="footer-copy">&copy; <span id="year"></span> Jóga &amp; Elsősegély Judittal. Minden jog fenntartva.</p>
+      <p class="footer-copy"><span>&copy; <span id="year"></span> Jóga &amp; Elsősegély Judittal. Minden jog fenntartva.</span> <a class="footer-login" href="admin.html">Belépés</a></p>
     </div>
   </footer>
+  <script src="js/page-defaults.js?v=3"></script>
+  <script src="js/content-store.js?v=5"></script>
   <script src="js/main.js?v=14"></script>
 </body>
 </html>

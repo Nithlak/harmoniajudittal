@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Szerkesztés</title>
+  <link rel="icon" href="images/logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,500&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css?v=9">
+  <script>
+    (function () {
+      try {
+        var theme = localStorage.getItem("hj-admin-theme");
+        if (theme === "green" || theme === "mint" || theme === "blue") {
+          document.documentElement.setAttribute("data-theme", theme);
+        }
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <div class="aero-sky" aria-hidden="true"></div>
+
+  <div id="login-view" class="login-wrap">
+    <section class="glass login-card">
+      <h1>Belépés</h1>
+      <p class="hint">A naptár, a következő esemény és a kép szerkesztéséhez.</p>
+      <form id="login-form">
+        <label>Felhasználónév
+          <input name="user" autocomplete="username" required>
+        </label>
+        <label>Kód
+          <input name="pass" type="password" autocomplete="current-password" required>
+        </label>
+        <p class="err" id="login-error" hidden>Hibás belépési adatok.</p>
+        <button class="btn" type="submit">Belépés</button>
+      </form>
+        <div class="theme-picks theme-picks--login" role="group" aria-label="Háttérszín">
+          <button type="button" class="theme-dot theme-dot--green" data-theme="green" title="Zöld" aria-label="Zöld"></button>
+          <button type="button" class="theme-dot theme-dot--blue" data-theme="blue" title="Kék" aria-label="Kék"></button>
+          <button type="button" class="theme-dot theme-dot--mint" data-theme="mint" title="Menta" aria-label="Menta"></button>
+        </div>
+
+    </section>
+  </div>
+
+  <div id="panel-view" class="wrap" hidden>
+    <div class="panel-head">
+      <div>
+        <p class="eyebrow">Admin</p>
+        <h1>Szerkesztés</h1>
+        <p class="hint" id="who"></p>
+      </div>
+      <div class="panel-actions">
+        <div class="theme-picks" role="group" aria-label="Háttérszín">
+          <button type="button" class="theme-dot theme-dot--green" data-theme="green" title="Zöld" aria-label="Zöld"></button>
+          <button type="button" class="theme-dot theme-dot--blue" data-theme="blue" title="Kék" aria-label="Kék"></button>
+          <button type="button" class="theme-dot theme-dot--mint" data-theme="mint" title="Menta" aria-label="Menta"></button>
+        </div>
+        <a class="btn btn--ghost btn--tiny" href="index.html" target="_blank" rel="noopener">A weboldal</a>
+        <button class="btn btn--ghost btn--tiny" type="button" id="logout">Kilépés</button>
+      </div>
+    </div>
+
+    <div class="admin-shell">
+      <aside class="glass admin-nav" aria-label="Admin menü">
+        <p class="eyebrow">Menü</p>
+        <p class="admin-nav__label">Tartalom</p>
+        <button type="button" class="admin-nav__btn is-on" data-view="event">Következő esemény</button>
+        <button type="button" class="admin-nav__btn" data-view="calendar">Naptár</button>
+        <p class="admin-nav__label">Oldalak</p>
+        <button type="button" class="admin-nav__btn" data-view="page-home">Főoldal</button>
+        <button type="button" class="admin-nav__btn" data-view="page-joga">Jóga</button>
+        <button type="button" class="admin-nav__btn" data-view="page-aid">Elsősegély</button>
+        <button type="button" class="admin-nav__btn" data-view="page-coach">Coaching</button>
+        <button type="button" class="admin-nav__btn" data-view="page-about">Rólam</button>
+        <button type="button" class="admin-nav__btn" data-view="page-contact">Kapcsolat</button>
+        <p class="admin-nav__label">Beállítások</p>
+        <button type="button" class="admin-nav__btn" data-view="extras">További</button>
+        <button type="button" class="admin-nav__btn" data-view="users">Felhasználók</button>
+      </aside>
+
+      <div class="admin-main">
+        <div class="admin-view" id="view-event">
+          <section class="glass pad">
+            <h2>Következő esemény</h2>
+            <form id="event-form" autocomplete="off">
+              <label class="check"><input type="checkbox" name="visible"> Látszik a főoldalon</label>
+
+              <div class="drop" id="drop-zone">
+                <img id="poster-preview" alt="Előnézet" hidden>
+                <div class="drop__copy" id="drop-copy">
+                  <strong>Kép feltöltése</strong>
+                  <span>Húzd ide a plakátot, vagy kattints a választáshoz.</span>
+                </div>
+                <input id="poster-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" aria-hidden="true" tabindex="-1">
+              </div>
+              <div class="panel-actions drop-actions">
+                <button class="btn btn--ghost btn--tiny" type="button" id="poster-pick">Kép kiválasztása</button>
+                <button class="btn btn--ghost btn--tiny" type="button" id="poster-reset">Eredeti plakát</button>
+                <button class="btn btn--danger btn--tiny" type="button" id="poster-clear">Kép törlése</button>
+              </div>
+              <p class="hint" id="poster-status"></p>
+
+              <div class="event-grid">
+                <label>Cím
+                  <input name="title">
+                </label>
+                <label>Kiemelt szó
+                  <input name="titleEm" placeholder="pl. Atkáron">
+                </label>
+                <label>Dátum
+                  <input name="date" type="date">
+                </label>
+                <label>Óra
+                  <input name="time" type="time">
+                </label>
+                <label class="wide">Megjelenő időpont
+                  <input name="when">
+                </label>
+                <label>Díj
+                  <input name="price">
+                </label>
+                <label>Gomb
+                  <input name="cta">
+                </label>
+                <label class="wide">Helyszín
+                  <textarea name="place" rows="3"></textarea>
+                </label>
+                <label class="wide">Köszöntés
+                  <input name="lead">
+                </label>
+                <label class="wide">Első bekezdés
+                  <textarea name="p1"></textarea>
+                </label>
+                <label class="wide">Második bekezdés
+                  <textarea name="p2"></textarea>
+                </label>
+                <label class="wide">Kép leírása
+                  <input name="imageAlt">
+                </label>
+                <label class="wide">Gomb linkje
+                  <select name="ctaHref">
+                    <option value="kapcsolat.html">Kapcsolat</option>
+                    <option value="joga.html">Jóga oldal</option>
+                    <option value="elseosegely.html">Elsősegély oldal</option>
+                    <option value="coaching.html">Coaching oldal</option>
+                  </select>
+                </label>
+              </div>
+            </form>
+            <div class="live" id="live-preview">
+              <p class="eyebrow">Előnézet</p>
+              <img id="live-image" alt="">
+              <h3 id="live-title"></h3>
+              <p id="live-when"></p>
+            </div>
+          </section>
+        </div>
+
+        <div class="admin-view" id="view-calendar" hidden>
+          <section class="glass pad">
+            <h2>Naptár</h2>
+            <form id="cal-form" autocomplete="off">
+              <p class="hint" id="cal-mode">Új időpont hozzáadása</p>
+              <div class="event-grid">
+                <label>Dátum
+                  <input name="date" type="date" required>
+                </label>
+                <label>Óra
+                  <input name="time" type="time" required>
+                </label>
+                <label>Típus
+                  <select name="type">
+                    <option value="joga">Jóga</option>
+                    <option value="aid">Elsősegély</option>
+                    <option value="coach">Coaching</option>
+                  </select>
+                </label>
+                <label>Cím
+                  <input name="title" required>
+                </label>
+                <label class="wide">Helyszín
+                  <input name="place">
+                </label>
+                <label class="wide">Megjegyzés / díj
+                  <input name="note" placeholder="pl. 1 000 Ft / alkalom">
+                </label>
+              </div>
+              <div class="panel-actions cal-actions">
+                <button class="btn btn--tiny" type="submit" id="cal-submit">Hozzáadás</button>
+                <button class="btn btn--ghost btn--tiny" type="button" id="cal-new">Üres űrlap</button>
+                <button class="btn btn--ghost btn--tiny" type="button" id="cal-copy">Ezt tedd a boxba</button>
+              </div>
+            </form>
+            <ul class="cal-list" id="cal-list"></ul>
+          </section>
+        </div>
+
+        <div class="admin-view" id="view-page-home" hidden>
+          <section class="glass pad">
+            <h2>Főoldal szövegei</h2>
+            <p class="hint">Itt a főoldal állandó szövegeit tudod átírni. A következő esemény és a naptár a saját menüpontjukban marad.</p>
+            <form id="page-form-home" class="page-form event-grid" autocomplete="off"></form>
+          </section>
+        </div>
+
+        <div class="admin-view" id="view-page-joga" hidden>
+          <section class="glass pad">
+            <h2>Jóga oldal szövegei</h2>
+            <form id="page-form-joga" class="page-form event-grid" autocomplete="off"></form>
+          </section>
+        </div>
+
+        <div class="admin-view" id="view-page-aid" hidden>
+          <section class="glass pad">
+            <h2>Elsősegély oldal szövegei</h2>
+            <form id="page-form-aid" class="page-form event-grid" autocomplete="off"></form>
+          </section>
+        </div>
+
+        <div class="admin-view" id="view-page-coach" hidden>
+          <section class="glass pad">
+            <h2>Coaching oldal szövegei</h2>
+            <form id="page-form-coach" class="page-form event-grid" autocomplete="off"></form>
+          </section>
+        </div>
+
+        <div class="admin-view" id="view-page-about" hidden>
+          <section class="glass pad">
+            <h2>Rólam oldal szövegei</h2>
+            <form id="page-form-about" class="page-form event-grid" autocomplete="off"></form>
+          </section>
+        </div>
+
+        <div class="admin-view" id="view-page-contact" hidden>
+          <section class="glass pad">
+            <h2>Kapcsolat oldal szövegei</h2>
+            <form id="page-form-contact" class="page-form event-grid" autocomplete="off"></form>
+          </section>
+        </div>
+
+        <div class="admin-view" id="view-extras" hidden>
+          <section class="glass pad extras">
+            <h2>További</h2>
+            <div class="extras-grid">
+              <label class="check"><input type="checkbox" id="cal-visible"> Naptár látszik a főoldalon</label>
+              <button class="btn btn--ghost btn--tiny" type="button" id="export-btn">Mentés letöltése</button>
+              <label class="btn btn--ghost btn--tiny file-btn">Mentés betöltése
+                <input id="import-file" type="file" accept="application/json,.json">
+              </label>
+              <button class="btn btn--ghost btn--tiny" type="button" id="reset-btn">Alaphelyzet</button>
+            </div>
+          </section>
+        </div>
+
+        <div class="admin-view" id="view-users" hidden>
+          <section class="glass pad users-card">
+            <div class="users-head">
+              <h2>Felhasználók</h2>
+              <p class="users-count" id="user-count">0 regisztrált felhasználó</p>
+            </div>
+            <p class="hint">Itt tudod átírni a saját belépésedet, és új adminokat felvenni.</p>
+            <div class="users-grid">
+              <form id="self-form" autocomplete="off">
+                <h3>Saját név és kód</h3>
+                <label>Felhasználónév
+                  <input name="user" required minlength="3">
+                </label>
+                <label>Kód
+                  <input name="pass" type="text" required minlength="4">
+                </label>
+                <label>Kód mégegyszer
+                  <input name="pass2" type="text" required minlength="4">
+                </label>
+                <button class="btn btn--tiny" type="submit">Saját adatok mentése</button>
+                <p class="hint" id="self-status"></p>
+              </form>
+              <form id="new-user-form" autocomplete="off">
+                <h3>Új felhasználó</h3>
+                <label>Felhasználónév
+                  <input name="user" required minlength="3">
+                </label>
+                <label>Kód
+                  <input name="pass" type="text" required minlength="4">
+                </label>
+                <label>Kód mégegyszer
+                  <input name="pass2" type="text" required minlength="4">
+                </label>
+                <button class="btn btn--tiny" type="submit">Felhasználó létrehozása</button>
+                <p class="hint" id="new-user-status"></p>
+              </form>
+            </div>
+            <ul class="user-list" id="user-list"></ul>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-save">
+      <button class="btn" type="button" id="save-btn">Mentés</button>
+      <p class="status" id="save-status">A változások a Mentés után jelennek meg a főoldalon.</p>
+      <p class="admin-credit">Admin panel v1.0 készítette: Nithlak (Viczán Gábor)</p>
+    </div>
+  </div>
+
+  <footer class="admin-credit">Admin panel v1.0 készítette: Nithlak (Viczán Gábor)</footer>
+
+  <script src="js/page-defaults.js?v=3"></script>
+  <script src="js/content-store.js?v=5"></script>
+  <script src="js/page-schema.js?v=2"></script>
+  <script src="js/admin.js?v=6"></script>
+</body>
+</html>

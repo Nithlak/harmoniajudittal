@@ -1042,6 +1042,16 @@ textarea { min-height: 140px; resize: vertical; }
 
 .footer-copy {
 
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 0.8rem;
+
+  flex-wrap: wrap;
+
   margin: 1rem 0 0;
 
   padding-top: 0.7rem;
@@ -1053,6 +1063,29 @@ textarea { min-height: 140px; resize: vertical; }
   letter-spacing: 0.04em;
 
   color: var(--muted);
+
+}
+
+.footer-login {
+
+  color: var(--muted);
+
+  text-decoration: none;
+
+  letter-spacing: 0.08em;
+
+}
+
+.footer-login:hover {
+
+  color: var(--teal-deep);
+
+}
+
+.event[hidden],
+.calendar-section[hidden] {
+
+  display: none !important;
 
 }
 
